@@ -34,6 +34,8 @@ Invoke-RestMethod -Method Post -Uri http://localhost:8000/api/v1/simulation/eval
 
 Full contracts: [API_CONTRACT.md](../docs/API_CONTRACT.md). Rule methodology and safety limits: [HEAT_RULES.md](../docs/HEAT_RULES.md). Frontend and Developer B should review these before merging integration changes.
 
+Integration pack: [exact provider handoff](../docs/INTEGRATION_HANDOFF.md), [HeatLab demonstration and captured HTTP examples](../docs/HEATLAB_DEMO.md), [safe Git synchronization](../docs/GIT_SYNC.md), and [current verification status](../docs/INTEGRATION_STATUS.md). After building, run `node scripts/verify-integration.mjs` to regenerate the examples and execute the independent HTTP checks. Its provider fixtures are verification-only and never connected to production startup.
+
 ## Developer B handoff
 
 Implement `WeatherProvider.getWeather(latitude, longitude): Promise<WeatherResponse>` from [shared types](src/types/index.ts), then inject it into `createApp({weatherProvider})` in [server startup](src/server.ts). Business logic does not need to change. A missing provider returns 503 from live endpoints, never invented weather. Real upstream timeout/cache behavior is Developer B's responsibility. A returned observation with missing or invalid essential metrics yields UNKNOWN. Provider failures return sanitized 503 errors.

@@ -1,5 +1,7 @@
 # Developer A implementation and handoff
 
+For the subsequent integration phase, see [integration status](INTEGRATION_STATUS.md), [provider/frontend handoff](INTEGRATION_HANDOFF.md) and [actual HeatLab demonstration](HEATLAB_DEMO.md). The results below record the initial implementation phase.
+
 Completed on 21 November 2026 in an initially empty workspace. The three supplied requirements PDFs were read, and the backend master prompt's Node.js architecture supersedes their proposed Python baseline. No source attachment was edited.
 
 ## Completed functionality
