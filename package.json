@@ -2,6 +2,7 @@
   "name": "sun-shield-database",
   "private": true,
   "type": "module",
+  "overrides": { "effect": "3.22.1" },
   "engines": {
     "node": ">=24 <25"
   },
