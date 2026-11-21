@@ -4,6 +4,7 @@ import heavy from '../../backend/examples/integration/heatlab-heavy.response.jso
 import lower from '../../backend/examples/integration/heatlab-lower.response.json' with { type: 'json' };
 import { constructionScenario } from '../src/constants/options';
 import { demoFacilities, demoWeather } from '../src/mocks/demo';
+import en from '../src/locales/en.json' with { type: 'json' };
 
 test('actual backend HeatLab: independent CRITICAL and HIGH results, matching weather, priority and labeling', async ({
   page,
@@ -27,6 +28,13 @@ test('actual backend HeatLab: independent CRITICAL and HIGH results, matching we
   await expect(a.getByText('40.68°C')).toBeVisible();
   await expect(b.getByText('40.68°C')).toBeVisible();
   await expect(a.getByText('SIMULATION · Not live weather')).toBeVisible();
+  for (const region of [a, b]) {
+    for (const code of [heavy.assessment.disclaimerCode, ...heavy.assessment.limitations]) {
+      await expect(
+        region.getByText(en[`limit.${code}` as keyof typeof en], { exact: true }).first(),
+      ).toBeVisible();
+    }
+  }
   expect(requests).toHaveLength(2);
   expect(requests[0].weatherOverride).toEqual(requests[1].weatherOverride);
   expect(requests.map((value) => value.profile.occupation).sort()).toEqual([

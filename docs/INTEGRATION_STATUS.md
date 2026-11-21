@@ -1,5 +1,7 @@
 # Current SunShield integration status
 
+Final release phase: `integration/final-release` starts from verified `2c9f8a3`. The verified commit is backed up on GitHub as annotated tag `backup/frontend-verified-20261121-2c9f8a3`; the complete frontend branch is pushed. Remote inspection found no new Developer B provider or Safe Zone corrections. No live routes were exposed, database operation attempted or deployment claimed. See [final release verification and exact startup walkthrough](FINAL_RELEASE.md).
+
 Updated for the frontend reengineering phase, 21 November 2026. The native frontend and unchanged core backend are now together on feature/frontend-reengineering, based on frontend-integration 8429fcb. Developer B's original root database/Safe Zone files and commits are preserved. No unrelated-history merge, shared-branch rewrite or deployment was performed.
 
 ## Verified working slice
