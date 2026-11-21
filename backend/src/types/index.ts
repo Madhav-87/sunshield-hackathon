@@ -2,6 +2,7 @@ import type { z } from 'zod';
 import type { locationSchema, workerProfileSchema, currentWeatherSchema, hourlyWeatherSchema, weatherResponseSchema, heatAssessmentSchema, recommendationSchema, assessmentResponseSchema, apiErrorSchema, advisorySchema } from '../schemas/shared.schema.js';
 import type { simulationRequestSchema } from '../schemas/simulation.schema.js';
 import type { protectionPlanSchema } from '../schemas/protection.schema.js';
+import type { SafeZoneRouterDependencies } from '../../../dist/src/routes/safezone.routes.js';
 
 export type Location = z.infer<typeof locationSchema>;
 export type WorkerProfile = z.infer<typeof workerProfileSchema>;
@@ -21,4 +22,6 @@ export interface WeatherProvider {
 export interface AppDependencies {
   weatherProvider?: WeatherProvider;
   now?: () => Date;
+  safeZoneServices?: SafeZoneRouterDependencies['services'];
+  communityWritesEnabled?: boolean;
 }

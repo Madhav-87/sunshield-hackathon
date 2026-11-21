@@ -26,7 +26,7 @@ const searchQuerySchema = z.object({
 }).strict();
 
 const idSchema = z.uuid();
-const submissionSchema = z.object({
+export const submissionSchema = z.object({
   name: z.string().trim().min(1).max(150),
   category: z.enum(SafeZoneCategory),
   latitude: z.number().finite().min(-90).max(90),
@@ -38,7 +38,7 @@ const submissionSchema = z.object({
   openingHours: z.string().max(1000).nullable().optional(),
 }).strict();
 
-const reportSchema = z.object({
+export const reportSchema = z.object({
   availabilityStatus: z.enum(AvailabilityStatus),
   comment: z.string().max(500).optional(),
 }).strict();

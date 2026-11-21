@@ -140,6 +140,18 @@ test('Safe Zone controls, map popup, details and report feedback use explicit UI
 test('chart tooltip and independent loading state use explicit weather fixtures', async ({
   page,
 }) => {
+  await page.route('**/api/v1/heat/assess', (route) =>
+    route.fulfill({
+      status: 503,
+      json: {
+        error: {
+          code: 'WEATHER_UNAVAILABLE',
+          message: 'Explicit independence fixture',
+          requestId: 'chart-independence-fixture',
+        },
+      },
+    }),
+  );
   await page.addInitScript(
     (profile) => localStorage.setItem('sunshield.workerProfile', JSON.stringify(profile)),
     constructionScenario,

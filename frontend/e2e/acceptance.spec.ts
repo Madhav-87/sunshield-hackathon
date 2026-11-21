@@ -454,7 +454,7 @@ test('independent scenario failures preserve the other successful response', asy
   ).toBeVisible();
 });
 
-test('community form sends canonical fields and honestly reports an unmounted API', async ({
+test('community form sends canonical fields and honestly reports disabled writes', async ({
   page,
 }) => {
   await page.addInitScript(
@@ -474,7 +474,9 @@ test('community form sends canonical fields and honestly reports an unmounted AP
     category: 'DRINKING_WATER',
   });
   expect(request.postDataJSON()).not.toHaveProperty('verificationStatus');
-  await expect(page.getByText('This service is not yet connected.')).toBeVisible();
+  await expect(
+    page.getByText('This service is temporarily unavailable or awaiting integration.'),
+  ).toBeVisible();
   await expect(
     page.getByText('Submitted for review. This does not verify the facility.'),
   ).toHaveCount(0);

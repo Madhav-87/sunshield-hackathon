@@ -77,7 +77,7 @@ describe('business API integration', () => {
     const app = createApp();
     const response = await request(app).get('/openapi.json').expect(200);
     expect(response.body.openapi).toBe('3.1.0');
-    expect(Object.keys(response.body.paths)).toEqual(['/api/v1/health', '/api/v1/heat/assess', '/api/v1/protection/plan', '/api/v1/simulation/evaluate', '/api/v1/weather']);
+    expect(Object.keys(response.body.paths)).toEqual(['/api/v1/health', '/api/v1/heat/assess', '/api/v1/protection/plan', '/api/v1/simulation/evaluate', '/api/v1/weather', '/api/v1/safe-zones', '/api/v1/safe-zones/{id}', '/api/v1/safe-zones/{id}/reports']);
     await request(app).get('/docs/').expect(200);
   });
 });

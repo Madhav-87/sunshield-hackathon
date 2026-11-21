@@ -6,6 +6,7 @@ const schema = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(8000),
   FRONTEND_URL: z.url().default('http://localhost:5173'),
   DATABASE_URL: z.string().default(''),
+  COMMUNITY_WRITES_ENABLED: z.enum(['true', 'false']).default('false').transform(value => value === 'true'),
   OPEN_METEO_BASE_URL: z.url().default('https://api.open-meteo.com/v1'),
   WEATHER_CACHE_TTL_SECONDS: z.coerce.number().int().min(1).max(3600).default(600),
 });

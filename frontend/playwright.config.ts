@@ -18,7 +18,12 @@ export default defineConfig({
       url: 'http://localhost:8000/api/v1/health',
       reuseExistingServer: false,
       timeout: 60_000,
-      env: { NODE_ENV: 'test', PORT: '8000', FRONTEND_URL: 'http://localhost:5173' },
+      env: {
+        NODE_ENV: 'test',
+        PORT: '8000',
+        FRONTEND_URL: 'http://localhost:5173',
+        COMMUNITY_WRITES_ENABLED: 'false',
+      },
     },
     {
       command:
