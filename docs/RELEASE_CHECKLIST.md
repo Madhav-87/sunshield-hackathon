@@ -1,36 +1,36 @@
 # SunShield Release Checklist
 
-Current QA branch: `feature/release-qa`. Its baseline is `integration/final-release` at `db93a5f799b702e1c0adeb9fda8011815ccd19de`. Recheck against the final release candidate.
+**Verified candidate:** integration/final-release at 8493165a0507d354fe422e918b5ce3290b14e181
+**QA branch:** qa/final-release-8493165
 
-## Verified in this review
+## Verified on this commit
 
-- [x] Node 24.22.3 backend typecheck, tests (64), and production build.
-- [x] Node 24.22.3 frontend typecheck, lint, tests (46), and production build.
-- [x] Root isolated Safe Zones tests (9) using `--root tests`; no database was contacted.
-- [x] Chromium E2E suite (28), including actual-backend HeatLab, XSS regression, SOS, location denial, language, deep links, and responsive layouts.
-- [x] Actual local HTTP smoke: health, both simulation scenarios, invalid simulation response/request IDs, and expected missing-provider/unmounted route statuses.
-- [x] Historical unsafe HTML finding absent in production frontend source; harmless hostile text remains inert in browser tests.
+- [x] Node 24 backend typecheck/build; backend tests 85/85 across 7 files.
+- [x] Frontend typecheck/lint/build; frontend tests 46/46 across 3 files.
+- [x] Chromium Playwright acceptance 39/39, including local actual HeatLab API, SOS, security regressions, language coverage, and responsive routes.
+- [x] Local production-mode backend startup and read-only HTTP smoke: health and HeatLab simulations pass; 5 PASS, 0 FAIL, 5 blocked.
+- [x] Historical unsafe HTML finding remains resolved; hostile text renders inertly.
 
 ## Release blockers
 
-- [ ] Deliver and verify the real weather provider; weather endpoint is 404 and live assessment/planning return `503 WEATHER_PROVIDER_UNAVAILABLE`.
-- [ ] Mount and verify Safe Zones API/database integration; current routes are 404 and no DB connectivity was tested.
-- [ ] Review/remediate root package dependency audit findings (2 critical, 3 high, 1 moderate; no forced fixes used).
-- [ ] Correct root `npm test` discovery so package-level tests do not pick up frontend tests; keep test roots separated.
-- [ ] Obtain and independently verify the public backend/frontend deployment and exact production env values.
-- [ ] Narrow Vercel CSP `connect-src` to the actual backend host after approval; verify deployed headers/CORS/deep links.
-- [ ] Get qualified Hindi/Marathi review and cross-browser/physical-device testing if time allows.
+- [ ] Resolve/verify backend deployment package contents: backend-only manifest omits repository-root @prisma/adapter-pg and pg runtime dependencies needed by Safe Zone storage.
+- [ ] Verify live Open-Meteo weather, assessment, and planner from a network-enabled authorized environment.
+- [ ] Obtain secure Supabase connection settings from Developer B and verify read-only connectivity; never share or commit credential values.
+- [ ] Re-run current root/backend/frontend dependency audits after Developer B's remediation lands; npm audit registry access was unavailable in this QA session.
+- [ ] Confirm authorized Vercel and backend hosting accounts, exact deployment URLs, owner-approved billing, and the backend Node 24 configuration.
+- [ ] Deploy only an explicitly security-reviewed and approved release commit.
+- [ ] Set exact frontend CORS origin and narrow CSP connect-src to the approved API host; verify public health and HeatLab first.
 
-## Deployment approval
+## Deployment evidence
 
-- [ ] Developer A approves the exact release commit.
-- [ ] Hosting/billing is authorized.
-- [ ] Backend health and actual HeatLab pass on the public HTTPS URL.
-- [ ] Frontend uses verified API URL and `VITE_USE_MOCKS=false`.
-- [ ] Verify CORS, CSP, console, routes, SOS, and supported live integrations on deployed build.
-- [ ] Record URLs, tested commit, timestamp, variable names (never secret values), and results.
-- [ ] Keep the local HeatLab runbook and backup video available.
+- [ ] Exact approved release commit and review recorded.
+- [ ] Backend public health and HeatLab pass over HTTPS.
+- [ ] Live integrations and read-only Supabase check pass.
+- [ ] Frontend uses verified HTTPS API URL and VITE_USE_MOCKS=false.
+- [ ] Verify CORS, CSP, console errors, deep links, SOS, and supported workflows.
+- [ ] Record public URLs and variable names only; keep secret values out of GitHub and reports.
+- [ ] Preserve the local HeatLab fallback and runbook.
 
 ## Recommendation
 
-The integrated local HeatLab demonstration is verified. Do not represent the complete live-weather/Safe-Zones MVP or a public deployment as ready until blockers above are resolved.
+The local HeatLab fallback is independently verified. This candidate is not ready for public deployment until the package/runtime boundary, live integrations, dependency audit, hosting authorization, and release approval gates are resolved.

@@ -1,26 +1,28 @@
 # SunShield Known Limitations
 
-Verified against `integration/final-release` commit `db93a5f799b702e1c0adeb9fda8011815ccd19de` on 21 November 2026 (IST). Recheck after teammate integration.
+**Verified integration commit:** 8493165a0507d354fe422e918b5ce3290b14e181
+**Review date:** 21 November 2026 (IST)
 
-## Unimplemented live integrations
+## Live integrations and deployment
 
-- `GET /api/v1/weather` is unmounted and returns 404.
-- `POST /api/v1/heat/assess` and `/api/v1/protection/plan` return `503 WEATHER_PROVIDER_UNAVAILABLE`; `backend/src/server.ts` starts `createApp()` without an injected provider.
-- Safe Zones discovery/details/submission/report routes are not mounted in the consolidated backend and return 404. Root Safe Zones services use mock tests only; no database connection/migration/seed was run.
-- Enterprise API endpoints are not implemented. Employer UI is draft/demo only.
-- No live Open-Meteo response, Supabase query, database write, public deployment, or hosted CORS/CSP check was performed.
+- WeatherProvider is composed into the backend and GET /api/v1/weather, POST /api/v1/heat/assess, and POST /api/v1/protection/plan are mounted. On local QA, they returned sanitized HTTP 503 WEATHER_UNAVAILABLE; direct Open-Meteo connectivity was blocked by this environment. A live upstream observation remains unverified.
+- Safe Zone routes are mounted. Without DATABASE_URL, read-only discovery returns sanitized HTTP 503 SAFE_ZONES_UNAVAILABLE. No Supabase query was run because no credentials or authorized connection were available.
+- Safe Zone writes are gated by COMMUNITY_WRITES_ENABLED=false. This QA run called no write route.
+- The backend package root does not declare @prisma/adapter-pg or pg; these are declared at repository root. Verify they are included in the actual backend deployment artifact before release.
+- No Vercel/backend host account, production URL, exact CORS origin, deployed CSP, public health test, or billing approval was available. No deployment or paid service activation occurred.
 
-## Security and dependency audit
+## Security and dependency status
 
-- The historical `dangerouslySetInnerHTML` / `legacyMarkup` issue is **resolved in the tested integration commit**: those patterns are absent from `frontend/src`, and Chromium tests verified malicious facility names, addresses, and comments render inertly.
-- The root Safe Zones package audit reports **2 critical, 3 high, and 1 moderate** advisories. Critical items include Vitest 3.2.7 and `tinypool`; high items include Prisma/@prisma/config and transitive `effect`. `npm audit --omit=dev` still reports three Prisma-related high advisories. Fix suggestions require major-version changes (Vitest 5.1.1 / Prisma 6.12.0); no automatic or forced fix was applied. Review and coordinate remediation before publishing this package or running untrusted CI changes.
-- Backend clean install reported 3 high advisories, associated with its Prisma toolchain. Frontend clean install reported zero vulnerabilities.
-- Dependency scans do not prove the application is completely secure. No public deployment was assessed.
+- The historical unsafe frontend HTML finding is resolved in this code: no dangerous HTML rendering path was found in the reviewed frontend code, and browser regressions confirm hostile facility names, addresses, and comments remain inert.
+- The backend clean install reports 3 high-severity advisories. Frontend install reports zero. A fresh audit query failed because this environment could not connect to npm's audit endpoint; root package current counts and remediation state are unverified. Developer B owns the remediation. Re-run audit on the exact final commit.
+- The previous root audit counts are preserved in the historical report and apply only to baseline db93a5f.
+- No public deployment was assessed.
 
-## Build/test workflow limits
+## Build and test boundaries
 
-- Root `npm test` recursively discovers nested frontend tests and fails under the root Node environment (22 failed / 97 passed). The intended root Safe Zones tests pass when scoped with `npm.cmd test -- --root tests` (9 passed); frontend tests pass from `frontend/` (46 passed). Keep package boundaries explicit in CI.
-- The root package has no `lint` script. Its unused `_availabilityStatus` test variable is not part of the frontend ESLint run; `frontend/npm run lint` passes.
-- Frontend production build emits a >500 kB main-chunk warning and two third-party Zod comment-annotation warnings. Build succeeds; warnings were not hidden.
-- Chromium acceptance is local Chromium only. Firefox/Safari, real mobile hardware, formal assistive technology, and qualified human translation review are not covered.
-- No direct live-weather, map-tile outage, database-outage or production-host test was performed.
+- On commit 8493165, backend typecheck/build pass and backend tests pass 85/85 across 7 files.
+- Frontend typecheck/lint/build pass; frontend tests pass 46/46 across 3 files.
+- Chromium Playwright passes 39/39 cases. Tests include local actual-backend HeatLab plus explicit UI fixtures for some service integrations. Fixture cases are not live provider/database verification.
+- Frontend build warns about a main chunk over 500 kB and two third-party Zod annotations; build succeeds.
+- Tests do not establish medical validity. Occupational recommendations remain unvalidated prototype policy, not medical advice or certified work-rest limits.
+- Firefox/Safari, physical mobile devices, formal assistive technology, and qualified human translation review are not covered.

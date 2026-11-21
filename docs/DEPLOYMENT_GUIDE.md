@@ -1,56 +1,62 @@
 # SunShield Deployment Guide
 
-**Status:** deployment preparation only. The actual frontend/backend packages and Vercel configuration are present, but no hosting account, public backend URL, authorized billing, or deployment was verified.
+**Status:** preparation only. No hosting account access, verified public API URL, production origin, billing authorization, or deployment was confirmed.
 
-## Application roots and commands
+## Application roots and runtime
 
-- Frontend: `frontend/`, native React + Vite. Vercel project root is `frontend`; `frontend/vercel.json` sets `npm run build`, `dist`, SPA rewrites, and security headers.
-- Backend: `backend/`, the consolidated Express application. `backend/src/app.ts` composes middleware/routes; `backend/src/server.ts` is its only startup entry point.
-- Repository root: Developer B's Prisma/Safe Zones infrastructure package and tests. It is not a second standalone Express service. Its Safe Zones router is not mounted in the core app.
+- Frontend Vercel project root: frontend/; frontend/vercel.json runs npm run build, outputs dist, applies SPA rewrites and security headers.
+- Backend package root requested for deployment: backend/; Express entry point is backend/src/server.ts, compiled to backend/dist/server.js.
+- Runtime: Node 24. The backend package specifies >=24 <25; local Node v24.22.3 passed builds/tests. Vercel and Render documentation currently list Node 24 as supported.
+- Repository root owns Prisma schema/generation and the Safe Zone service build.
 
-Use Node 24. From `backend/` run `npm.cmd ci`, `npm.cmd run build`, then `npm.cmd start`. From `frontend/` run `npm.cmd ci`, configure the two Vite variables below, then `npm.cmd run build`. Backend requires the platform-assigned `PORT` and uses `FRONTEND_URL` for CORS.
+## Deployment configuration
 
-## Frontend configuration
+Build each package under Node 24:
 
-| Variable | Meaning | Behavior |
-|---|---|---|
-| `VITE_API_BASE_URL` | Public API origin/base; client normalizes to `/api/v1` | Development defaults to localhost; production defaults to same-origin `/api/v1` if unset |
-| `VITE_USE_MOCKS` | Explicit demo fixtures | Mocks are used only when exactly `true`; API is the default |
+    cd backend
+    npm.cmd ci
+    npm.cmd run build
+    npm.cmd start
 
-For an approved public deployment, set `VITE_API_BASE_URL=https://<verified-backend-host>/api/v1` and `VITE_USE_MOCKS=false`. These are public build-time settings. Never add database passwords, private API keys, or Supabase service-role keys to frontend variables.
+    cd frontend
+    npm.cmd ci
+    $env:VITE_API_BASE_URL = 'https://<verified-api-host>/api/v1'
+    $env:VITE_USE_MOCKS = 'false'
+    npm.cmd run build
 
-## Backend environment schema
+Backend runtime settings from backend/src/config/env.ts:
 
-These are the actual Zod-validated backend names and defaults in `backend/src/config/env.ts`:
+| Variable | Release setting |
+|---|---|
+| NODE_ENV | production |
+| PORT | Platform-assigned listener port |
+| FRONTEND_URL | Exact approved frontend HTTPS origin |
+| DATABASE_URL | Supabase PostgreSQL URL stored as a backend secret |
+| COMMUNITY_WRITES_ENABLED | false pending an approved write-enabled environment |
+| OPEN_METEO_BASE_URL | https://api.open-meteo.com/v1 |
+| WEATHER_CACHE_TTL_SECONDS | 600 |
 
-| Variable | Required/default | Notes |
-|---|---|---|
-| `NODE_ENV` | Optional; `development` | Allowed: development, test, production |
-| `PORT` | Optional; `8000` | Integer 1–65535; bind uses platform port |
-| `FRONTEND_URL` | Optional; `http://localhost:5173` | Exact CORS origin |
-| `DATABASE_URL` | Optional; empty string | No current core route requires a DB connection |
-| `OPEN_METEO_BASE_URL` | Optional; `https://api.open-meteo.com/v1` | Config exists; provider is not wired into server composition |
-| `WEATHER_CACHE_TTL_SECONDS` | Optional; `600` | Config exists; no live provider/cache is currently connected |
+Set DIRECT_URL only for Prisma migration tasks if Developer B confirms it is needed. It is read by the repository-root Prisma config and is not accepted or used by the backend application schema. Do not commit a real .env, expose database URLs in logs, or put credentials in frontend build variables. Never send Supabase credentials through GitHub.
 
-No supported `DIRECT_URL` setting exists in the consolidated backend schema. `DIRECT_URL` belongs to the root Prisma package config, not the backend service. Do not invent backend timeout/CORS names or put database secrets in frontend settings.
+## Deployment package gate
 
-## Hosting workflow and limits
+Before configuring a backend host, verify the built deployment artifact includes the repository-root generated Prisma client/services and their runtime dependencies. Currently backend/package.json omits @prisma/adapter-pg and pg, although Safe Zone storage imports the adapter and the root package declares both. A backend-only production install has not been shown to include these modules. The current compile succeeds in the monorepo checkout, but that does not prove the backend-root deployment artifact will load Safe Zone storage.
 
-Proposed architecture remains Vercel frontend, an approved Node.js host (for example Render) for `backend/`, Supabase PostgreSQL, and Open-Meteo. Account access, platform limits, pricing, billing and public service URLs are unverified. Do not activate paid services without authorization.
+## Security and hosting settings
 
-Deploy only an approved release commit. Deploy backend first and verify its public health and actual HeatLab simulation endpoints. Then configure the real frontend API URL, deploy `frontend/`, and verify HTTPS, CORS, CSP, refresh/deep links, browser console and primary workflows. Current live weather and protection planning return `503 WEATHER_PROVIDER_UNAVAILABLE`; weather and Safe Zones return 404. Full-MVP public deployment is not release-ready until those integrations are delivered and tested.
+- Set Vercel root to frontend/, VITE_API_BASE_URL to the verified public HTTPS API base, and VITE_USE_MOCKS=false.
+- Set backend FRONTEND_URL to exactly the deployed frontend origin.
+- Narrow frontend/vercel.json connect-src from all HTTPS hosts to the approved API host.
+- Confirm the host is configured for Node 24, starts the compiled service with the platform port, and includes required Prisma modules.
+- Do not activate paid services or deploy until the account owner authorizes them and the release commit passes security review.
 
-## Existing Vercel controls
+## Verification order
 
-Preserve `frontend/vercel.json`: SPA rewrite to `index.html`; `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, and CSP are configured. CSP currently allows `connect-src 'self' https:` and should be narrowed to the actual approved API host in coordination with Developer A. Do not disable CSP or deploy the placeholder URL in `frontend/.env.production.example`.
+1. Deploy the explicitly approved backend commit and check public health plus read-only HeatLab simulation.
+2. Verify live weather, occupational assessment, planner, Safe Zone discovery, and Supabase read-only connectivity from the hosted environment.
+3. Configure and deploy the frontend; verify CORS, CSP, HTTPS, deep-link refresh, browser console, HeatLab, SOS, and error states.
+4. Record exact commit, public URLs, variable names (never values), timestamp, and results.
 
-## Smoke verification
+Use node scripts/api-smoke.mjs against a locally running or explicitly approved API. The script performs read-only GETs and non-persistent simulation/assessment/planning POSTs. It does not call Safe Zone write routes.
 
-Build the backend first, then run from repo root:
-
-```powershell
-$env:SUNSHIELD_API_BASE_URL = 'http://localhost:8000/api/v1'
-node .\scripts\api-smoke.mjs
-```
-
-The script uses compiled backend Zod schemas, sends only non-persistent simulation and read-only GET/assessment/planner requests, and reports PASS, FAIL, BLOCKED, or NOT IMPLEMENTED. It never submits Safe Zone writes. Use a public API URL only after the API owner authorizes smoke checks.
+If deployment cannot be completed before the submission buffer, stop deployment attempts and preserve the independently verified local HeatLab demonstration.
