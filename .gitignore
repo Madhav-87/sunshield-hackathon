@@ -1,8 +1,56 @@
+# Dependencies (all applications in this repository)
 node_modules/
+
+# Compiled output and tool caches
 dist/
+build/
+*.tsbuildinfo
+.cache/
+.vite/
+.vitest/
+.eslintcache
+.stylelintcache
+
+# Test coverage and generated browser-test reports
 coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# Local environment and secrets; keep sanitized setup templates
 .env
 .env.*
 !.env.example
-tmp/
+!.env.*.example
+!.env.template
+!.env.*.template
+*.local
+
+# Logs and process files
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.pid
+*.pid.lock
+
+# Local scratch files and deployment metadata
+/tmp/
+/temp/
+.vercel/
+
+# Editor-local files; shared VS Code configuration remains trackable
+.idea/
+.vscode/*.local.json
+*.swp
+*.swo
+*~
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Keep package lockfiles, Prisma schema/migrations, source, documentation,
+# shared editor configuration, and the verified integration examples tracked.
