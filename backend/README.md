@@ -38,7 +38,21 @@ Integration pack: [exact provider handoff](../docs/INTEGRATION_HANDOFF.md), [Hea
 
 ## Developer B handoff
 
-Implement `WeatherProvider.getWeather(latitude, longitude): Promise<WeatherResponse>` from [shared types](src/types/index.ts), then inject it into `createApp({weatherProvider})` in [server startup](src/server.ts). Business logic does not need to change. A missing provider returns 503 from live endpoints, never invented weather. Real upstream timeout/cache behavior is Developer B's responsibility. A returned observation with missing or invalid essential metrics yields UNKNOWN. Provider failures return sanitized 503 errors.
+The Open-Meteo `WeatherProvider` implements `getWeather(latitude, longitude): Promise<WeatherResponse>` from [shared types](src/types/index.ts). Inject it into `createApp({weatherProvider})` at the existing composition point. A missing provider returns 503 from live endpoints, never invented weather. A returned observation with missing or invalid essential metrics yields UNKNOWN. Provider failures return sanitized 503 errors.
+
+## Open-Meteo provider module
+
+The production provider is exported from [`src/services/open-meteo-weather.provider.ts`](src/services/open-meteo-weather.provider.ts). Inject its factory result at the existing application composition point:
+
+```ts
+import { createApp } from './app.js';
+import { createOpenMeteoWeatherProvider } from './services/open-meteo-weather.provider.js';
+
+const weatherProvider = createOpenMeteoWeatherProvider();
+const app = createApp({ weatherProvider });
+```
+
+No API key is required for the public Open-Meteo forecast endpoint. `OPEN_METEO_BASE_URL` defaults to `https://api.open-meteo.com/v1`; `WEATHER_CACHE_TTL_SECONDS` defaults to `600` and accepts values from 1 through 3600. The upstream request has a fixed five-second timeout. The provider validates normalized output with the shared weather schema, reports successful upstream reads as `LIVE`, and reports in-TTL location cache hits as `CACHED` while retaining the original `fetchedAt` and observation timestamps. Upstream failures reject without supplying fallback weather.
 
 Developer B owns weather normalization/cache, Supabase connectivity, Prisma schema and migrations, Safe Zones, distance calculations, community reports, employer dashboard and infrastructure. Those files are not implemented here. The weather, Safe Zone and enterprise dashboard routes are not registered. The optional enterprise planning endpoint is deferred pending team agreement on its payload.
 

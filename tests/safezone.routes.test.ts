@@ -55,6 +55,24 @@ describe("SafeZone routes", () => {
     expect(services.searchSafeZones).not.toHaveBeenCalled();
   });
 
+  it.each(["DRINKING_WATER", "SHADED_REST_AREA", "COOLING_CENTER", "COMMUNITY_SHOP", "MEDICAL_FACILITY"])(
+    "accepts the canonical facility category %s",
+    async (category) => {
+      const { app, services } = setup();
+      await request(app).get("/api/v1/safe-zones")
+        .query({ latitude: "18.5", longitude: "73.8", category })
+        .expect(200);
+      expect(services.searchSafeZones).toHaveBeenCalledWith(expect.objectContaining({ category }));
+    },
+  );
+
+  it("rejects noncanonical facility category aliases", async () => {
+    const { app, services } = setup();
+    await request(app).get("/api/v1/safe-zones?latitude=18.5&longitude=73.8&category=WATER")
+      .expect(422);
+    expect(services.searchSafeZones).not.toHaveBeenCalled();
+  });
+
   it("does not allow submitters to choose verification status", async () => {
     const { app, services } = setup();
     await request(app).post("/api/v1/safe-zones").send({
@@ -91,6 +109,14 @@ describe("SafeZone routes", () => {
     const { app, services } = setup();
     await request(app).post("/api/v1/safe-zones/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/reports")
       .send({ availabilityStatus: "AVAILABLE" }).expect(404);
+    expect(services.createSafeZoneReport).not.toHaveBeenCalled();
+  });
+
+  it("rejects overlong community reports before they reach persistence", async () => {
+    const { app, services } = setup();
+    await request(app).post(`/api/v1/safe-zones/${id}/reports`)
+      .send({ availabilityStatus: "LIMITED", comment: "x".repeat(501) })
+      .expect(422);
     expect(services.createSafeZoneReport).not.toHaveBeenCalled();
   });
 });
