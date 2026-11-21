@@ -1,5 +1,11 @@
 import 'dotenv/config';
+import { config as loadEnv } from 'dotenv';
+import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
+
+// Share an ignored repository-level configuration with Prisma CLI when supplied.
+// Process variables and backend/.env retain precedence; no values are logged.
+loadEnv({ path: fileURLToPath(new URL('../../../.env', import.meta.url)), quiet: true });
 
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),

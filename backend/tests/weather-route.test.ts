@@ -11,6 +11,11 @@ describe('weather API composition', () => {
       .get('/api/v1/weather?latitude=18.5204&longitude=73.8567').expect(200);
     expect(getWeather).toHaveBeenCalledWith(18.5204, 73.8567);
     expect(response.body).toEqual(value);
+    const missing = { ...weather(), current: null, hourly: [] };
+    const nullable = await request(createApp({ weatherProvider: { getWeather: async () => missing } }))
+      .get('/api/v1/weather?latitude=0&longitude=0').expect(200);
+    expect(nullable.body.current).toBeNull();
+    expect(nullable.body.hourly).toEqual([]);
   });
   it.each(['', '?latitude=&longitude=0', '?latitude=91&longitude=0', '?latitude=0&longitude=Infinity', '?latitude=0&longitude=0&extra=1', '?latitude=0&latitude=1&longitude=0'])('rejects malformed query %s before fetching', async query => {
     const getWeather = vi.fn(async () => weather());

@@ -22,5 +22,7 @@ describe('application foundation', () => {
     expect(parseEnv({}).PORT).toBe(8000);
     expect(() => parseEnv({ PORT: 'secret' })).toThrow('PORT');
     expect(() => parseEnv({ PORT: 'secret' })).not.toThrow('secret');
+    expect(() => parseEnv({ WEATHER_CACHE_TTL_SECONDS: '3601' })).toThrow('WEATHER_CACHE_TTL_SECONDS');
+    expect(parseEnv({ WEATHER_CACHE_TTL_SECONDS: '3600', COMMUNITY_WRITES_ENABLED: 'false' }).COMMUNITY_WRITES_ENABLED).toBe(false);
   });
 });
