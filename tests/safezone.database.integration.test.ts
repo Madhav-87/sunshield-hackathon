@@ -19,14 +19,21 @@ describe.skipIf(!enabled)('read-only Supabase SafeZone integration', () => {
     if (!database || !safeZoneService) throw new Error('Database integration not initialized');
     const { prisma } = database;
     const { getSafeZone, searchSafeZones } = safeZoneService;
-    const [connection, facilityCount, reportCount, verificationCounts, existingFacility, verifiedFacility] = await Promise.all([
+    const [connection, facilityCount, reportCount, verificationCounts, existingFacility, verifiedFacility, demoFacilities] = await Promise.all([
       prisma.$queryRaw<Array<{ connected: number }>>`SELECT 1 AS connected`,
       prisma.safeZone.count(),
       prisma.safeZoneReport.count(),
       prisma.safeZone.groupBy({ by: ['verificationStatus'], _count: { _all: true } }),
-      prisma.safeZone.findFirst({ select: { id: true, latitude: true, longitude: true } }),
+      prisma.safeZone.findFirst({
+        where: { verificationStatus: { not: 'REJECTED' } },
+        select: { id: true, latitude: true, longitude: true },
+      }),
       prisma.safeZone.findFirst({
         where: { verificationStatus: 'VERIFIED' },
+        select: { id: true, latitude: true, longitude: true },
+      }),
+      prisma.safeZone.findMany({
+        where: { verificationStatus: 'DEMO' },
         select: { id: true, latitude: true, longitude: true },
       }),
     ]);
@@ -40,7 +47,16 @@ describe.skipIf(!enabled)('read-only Supabase SafeZone integration', () => {
     }));
 
     if (existingFacility) {
-      expect((await getSafeZone(existingFacility.id))?.id).toBe(existingFacility.id);
+      const details = await getSafeZone(existingFacility.id);
+      expect(details).toMatchObject({
+        id: existingFacility.id,
+        latitude: existingFacility.latitude,
+        longitude: existingFacility.longitude,
+      });
+      expect(details?.name).toEqual(expect.any(String));
+      expect(details?.category).toEqual(expect.any(String));
+      expect(details?.address).toEqual(expect.any(String));
+      expect(details?.verificationStatus).toEqual(expect.any(String));
     }
 
     if (verifiedFacility) {
@@ -52,20 +68,31 @@ describe.skipIf(!enabled)('read-only Supabase SafeZone integration', () => {
       });
       expect(nearby.some((facility) => facility.id === verifiedFacility.id)).toBe(true);
       expect((await getSafeZone(verifiedFacility.id))?.id).toBe(verifiedFacility.id);
-    } else {
-      const demo = await prisma.safeZone.findFirst({
-        where: { verificationStatus: 'DEMO' },
-        select: { latitude: true, longitude: true },
-      });
-      if (demo) {
-        const publicResults = await searchSafeZones({
-          latitude: demo.latitude,
-          longitude: demo.longitude,
-          radiusKm: 1,
-          includeDemo: false,
-        });
-        expect(publicResults.every((facility) => facility.verificationStatus !== 'DEMO')).toBe(true);
-      }
     }
+
+    for (const demo of demoFacilities) {
+      const [publicResults, demoInclusiveResults, details] = await Promise.all([
+        searchSafeZones({ latitude: demo.latitude, longitude: demo.longitude, radiusKm: 1, includeDemo: false }),
+        searchSafeZones({ latitude: demo.latitude, longitude: demo.longitude, radiusKm: 1, includeDemo: true }),
+        getSafeZone(demo.id),
+      ]);
+      expect(publicResults.every((facility) => facility.verificationStatus !== 'DEMO')).toBe(true);
+      expect(demoInclusiveResults.some((facility) => facility.id === demo.id && facility.verificationStatus === 'DEMO')).toBe(true);
+      expect(details).toMatchObject({
+        id: demo.id,
+        latitude: demo.latitude,
+        longitude: demo.longitude,
+        verificationStatus: 'DEMO',
+      });
+      expect(details?.name).toEqual(expect.any(String));
+      expect(details?.category).toEqual(expect.any(String));
+      expect(details?.address).toEqual(expect.any(String));
+    }
+    console.info('Read-only Safe Zone checks', JSON.stringify({
+      demoFacilities: demoFacilities.length,
+      publicDiscoveryExcludesDemo: true,
+      demoInclusiveDiscoveryIncludesEachDemo: true,
+      existingFacilityDetailsLookup: Boolean(existingFacility),
+    }));
   });
 });
