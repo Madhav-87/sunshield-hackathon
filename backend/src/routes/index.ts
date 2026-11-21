@@ -3,6 +3,7 @@ import type { AppDependencies } from '../types/index.js';
 import { heatRoutes } from './heat.routes.js';
 import { protectionRoutes } from './protection.routes.js';
 import { simulationRoutes } from './simulation.routes.js';
+import { weatherRoutes } from './weather.routes.js';
 
 export function createApiRouter(dependencies: AppDependencies = {}) {
   const router = Router();
@@ -12,5 +13,6 @@ export function createApiRouter(dependencies: AppDependencies = {}) {
   router.use('/heat', heatRoutes(dependencies));
   router.use('/protection', protectionRoutes(dependencies));
   router.use('/simulation', simulationRoutes(dependencies));
+  router.use('/weather', weatherRoutes(dependencies));
   return router;
 }

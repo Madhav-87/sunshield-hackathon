@@ -1,8 +1,12 @@
 import { createApp } from './app.js';
 import { env } from './config/env.js';
+import { createOpenMeteoWeatherProvider } from './services/open-meteo-weather.provider.js';
 
-// Developer B wires the real WeatherProvider here after integration.
-const server = createApp().listen(env.PORT, () => {
+const weatherProvider = createOpenMeteoWeatherProvider({
+  baseUrl: env.OPEN_METEO_BASE_URL,
+  cacheTtlMs: env.WEATHER_CACHE_TTL_SECONDS * 1000,
+});
+const server = createApp({ weatherProvider }).listen(env.PORT, () => {
   console.log(`SunShield listening on port ${env.PORT}`);
 });
 let stopping = false;

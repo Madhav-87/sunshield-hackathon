@@ -7,7 +7,7 @@ const schema = z.object({
   FRONTEND_URL: z.url().default('http://localhost:5173'),
   DATABASE_URL: z.string().default(''),
   OPEN_METEO_BASE_URL: z.url().default('https://api.open-meteo.com/v1'),
-  WEATHER_CACHE_TTL_SECONDS: z.coerce.number().int().positive().default(600),
+  WEATHER_CACHE_TTL_SECONDS: z.coerce.number().int().min(1).max(3600).default(600),
 });
 
 export function parseEnv(input: Record<string, unknown>) {
