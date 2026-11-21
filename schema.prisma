@@ -81,10 +81,10 @@ model SafeZone {
   verificationStatus VerificationStatus @default(PENDING) @map("verification_status")
   availabilityStatus AvailabilityStatus @default(UNKNOWN) @map("availability_status")
 
-  lastVerifiedAt     DateTime?          @db.Timestamptz(3) @map("last_verified_at")
+  lastVerifiedAt     DateTime?          @db.Timestamptz @map("last_verified_at")
 
-  createdAt          DateTime           @default(now()) @db.Timestamptz(3) @map("created_at")
-  updatedAt          DateTime           @default(now()) @updatedAt @db.Timestamptz(3) @map("updated_at")
+  createdAt          DateTime           @default(now()) @db.Timestamptz @map("created_at")
+  updatedAt          DateTime           @default(now()) @updatedAt @db.Timestamptz @map("updated_at")
 
   reports            SafeZoneReport[]
 
@@ -110,13 +110,13 @@ model SafeZoneReport {
 
   reporterTokenHash  String?            @db.VarChar(255) @map("reporter_token_hash")
 
-  createdAt          DateTime           @default(now()) @db.Timestamptz(3) @map("created_at")
+  createdAt          DateTime           @default(now()) @db.Timestamptz @map("created_at")
 
   safeZone           SafeZone           @relation(fields: [safeZoneId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([safeZoneId])
   @@index([createdAt])
-  @@index([safeZoneId, createdAt])
+  @@index([safeZoneId, createdAt], map: "safe_zone_reports_zone_created_idx")
   @@map("safe_zone_reports")
 }
 
@@ -132,7 +132,7 @@ model Organization {
 
   isDemo           Boolean          @default(false) @map("is_demo")
 
-  createdAt        DateTime         @default(now()) @db.Timestamptz(3) @map("created_at")
+  createdAt        DateTime         @default(now()) @db.Timestamptz @map("created_at")
 
   worksites        Worksite[]
 
@@ -162,8 +162,8 @@ model Worksite {
   waterAccess    Boolean      @default(false) @map("water_access")
   shadeAccess    Boolean      @default(false) @map("shade_access")
 
-  workStart      DateTime     @db.Time(0) @map("work_start")
-  workEnd        DateTime     @db.Time(0) @map("work_end")
+  workStart      DateTime     @db.Time @map("work_start")
+  workEnd        DateTime     @db.Time @map("work_end")
 
   isDemo         Boolean      @default(false) @map("is_demo")
 
