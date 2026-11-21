@@ -1,6 +1,20 @@
 # SunShield final hackathon release
 
-Release preparation: 21 November 2026, before the 22:00 Asia/Kolkata deadline. This release preserves the verified frontend and engine. It does not declare unavailable external integrations complete.
+Release Phase 2: deadline extended to **00:00 IST, 22 November 2026**. The previous 22:00 deadline is superseded. Targets: essential integration by 23:00 on 21 November, QA/deployment by 23:40, development freeze at 23:50, and a ten-minute submission buffer. This release preserves the verified frontend and engine. It does not declare unavailable external integrations complete.
+
+## Phase 2 coordination and current gate
+
+Fresh remote inspection on 21 November at 21:45 IST found no new Developer B or C branch or commit. The advertised branches were main, frontend-integration, feature/core-intelligence, feature/frontend-reengineering and integration/final-release. The working branch remains integration/final-release; the backup tag is preserved.
+
+[Team coordination issue #1](https://github.com/Madhav-87/sunshield-hackathon/issues/1) requests the actual provider and corrected infrastructure branch/commit/export paths from Developer B, and independent QA/deployment configuration and branch/commit from Developer C. The repository owner is mentioned to route the request; no individual Developer C identity or private messaging channel was available. No secrets are requested in GitHub. Current integration commit shared with the team: c153b9e7174c6e27e99057f33ac762aafb7ebf41. Subsequent completed integrations will be shared on that issue.
+
+The current blocker is delivery of those modules and authorized test/hosting configuration. No new provider, cache, database architecture or deployment pipeline is being implemented in parallel with their ownership. Re-fetch and inspect their commits before integration; do not assume the earlier findings remain accurate once corrected modules arrive. No new infrastructure tests were supplied yet.
+
+Phase 2 checks rerun: all **64 original backend tests**, all **46 frontend tests**, the full **28-case Chromium suite**, and Developer B's existing **9 router/distance tests** pass. The 9 infrastructure tests ran in the existing isolated dependency-installed review snapshot after verifying its source, tests, Prisma schema and migration hashes match the preserved root files. The router tests mock the services; they do not establish database connectivity or fix the known search defect. Backend typecheck and production build, frontend production build/TypeScript, and actual compiled-app HTTP health/HeatLab checks passed again. The mandatory comparison still returns CRITICAL/HIGH with heat index 40.68 C and SIMULATION, and the browser case checks all limitations. Source files and dependencies were unchanged in Phase 2. Existing bundle warnings remain.
+
+Rechecks through 21:49 IST found no new remote implementation, open pull request or team reply. These are the latest observed results, not a claim that teammate work cannot arrive later. Fetch again when Developer B/C report their pushed commits. Fresh external weather/database checks are blocked until the real implementation/configuration is supplied.
+
+Release recommendation while this gate remains unresolved: ready for the verified local HeatLab demonstration; **not ready to claim full live-weather/database release or verified public deployment**. Main requires explicit user approval and must remain unchanged.
 
 ## Repository and application
 
