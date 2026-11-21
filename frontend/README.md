@@ -7,8 +7,10 @@ Native React, strict TypeScript and Vite frontend. TanStack Query owns server st
 Use Node.js 24. In one terminal:
 
 ```powershell
-cd backend
 npm ci
+npm --prefix backend ci
+npm run build
+cd backend
 npm run dev
 ```
 
@@ -21,7 +23,7 @@ Copy-Item .env.example .env.local
 npm run dev -- --host localhost
 ```
 
-Open http://localhost:5173. Default API URL is http://localhost:8000/api/v1 and mocks default to false. The backend currently supports health and HeatLab independently; live weather/assessment/planning and Safe Zones show accurate unavailable states until Developer B's integration is composed. Do not put database credentials or service-role keys in frontend environment files.
+Open http://localhost:5173. Default API URL is http://localhost:8000/api/v1 and mocks default to false. Health and HeatLab are independent; real Open-Meteo dashboard/assessment/planning are integrated. Safe Zone reads are mounted but return unavailable until authorized storage is configured; community writes default disabled. Do not put database credentials or service-role keys in frontend environment files. Backend deployment requires the repository-root infrastructure build and both dependency trees; see the [release handoff](../docs/FINAL_RELEASE.md).
 
 HeatLab makes independent real POST /simulation/evaluate requests for each scenario. Its initial 35 C / 50% / 5 km/h comparison should display the actual prototype CRITICAL construction and HIGH vendor advisories with equal environmental indicators. These outputs are not calculated or hardcoded in React. Simulation does not modify the saved worker profile.
 
@@ -53,7 +55,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The browser suite starts/stops the unchanged backend on 8000 and frontend on 5173; both ports must be free. Most UI-only weather/map cases use clearly identified fixtures because real routes are unavailable. Mandatory HeatLab cases call the actual engine. To test built assets rather than Vite development, use a fresh PowerShell terminal:
+The browser suite starts/stops the integrated backend on 8000 and frontend on 5173; both ports must be free. UI edge/failure weather/map/plan cases use clearly identified fixtures; these do not replace the separate actual Open-Meteo verification. Mandatory HeatLab cases call the actual engine. Community writes are forced off by the browser startup configuration. To test built assets rather than Vite development, use a fresh PowerShell terminal:
 
 ```powershell
 $env:FRONTEND_E2E_PREVIEW='true'

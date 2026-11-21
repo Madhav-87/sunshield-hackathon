@@ -1,6 +1,6 @@
 # SunShield integration handoff
 
-Status: existing backend behavior and contracts are preserved. The native frontend is now integrated with health and HeatLab. Developer B's root database/Safe Zone implementation is present unchanged but is not mounted in the core app; its real WeatherProvider is still unavailable. Default live endpoints intentionally return 503. Health and HeatLab work without weather or a database. See [current integration status](INTEGRATION_STATUS.md). No teammate messages have been sent.
+Status: Developer B's reviewed provider and corrected Safe Zone infrastructure are integrated in one app. Actual Open-Meteo weather, assessments and hourly plans have been verified locally and rendered in the native frontend. Safe Zone routes are mounted with lazy storage and default-disabled writes; authorized database configuration is still unavailable to Developer A. Health and HeatLab remain independent. Existing engine and weather/assessment/plan contracts below are preserved. See [current status](INTEGRATION_STATUS.md), [deployment/startup handoff](FINAL_RELEASE.md) and [actual evidence](release-evidence/README.md). Team updates are in coordination issue #1.
 
 ## Provider contract
 
@@ -61,7 +61,7 @@ Strict weather objects reject extra properties. Zod numbers reject non-finite va
 
 ## Injection and failure behavior
 
-At [server composition](../backend/src/server.ts), once Developer B supplies its actual instance, replace `createApp()` with `createApp({ weatherProvider })`. Import its confirmed export from the actual module path. Keep the existing listen callback, signals, shutdown timer and error handler. Do not instantiate a second app or inject test fixtures into production.
+At [server composition](../backend/src/server.ts), createOpenMeteoWeatherProvider is already instantiated once with validated base URL/cache TTL and injected into createApp. Weather, assessment and planner share it. Existing listener, signals, shutdown timer and error handling remain; loaded Safe Zone storage is also disconnected. Do not instantiate another weather client or inject fixtures into production. Root infrastructure is compiled before the backend; deploy both compiled trees and package dependency installations as described in the release handoff.
 
 The minimal typed injection example is:
 
@@ -75,7 +75,7 @@ function composeWithProvider(weatherProvider: WeatherProvider) {
 // Pass Developer B's real instance to this call at the existing composition point.
 ```
 
-Developer B owns external request timeouts, bounded retries, normalization, source timestamps and caching. The current adapter awaits getWeather and does not impose its own timeout. A provider that never settles can leave the request pending; complete upstream timeout handling before live integration.
+Developer B's integrated implementation owns normalization, original timestamps, bounded location caching and a five-second fetch/body deadline. It rejects failures without synthetic fallback. The generic adapter still awaits the injected provider; alternate providers must supply their own bounded behavior. Cache TTL defaults to 600 seconds and is validated from 1 through 3600; engine freshness remains stricter where applicable.
 
 | Condition | HTTP and behavior |
 | --- | --- |
@@ -99,8 +99,9 @@ Base URL: `http://localhost:8000/api/v1`; configured CORS origin defaults to `ht
 | --- | --- | --- |
 | GET /health | Yes | No body; returns [captured health JSON](../backend/examples/integration/health.response.json) |
 | POST /simulation/evaluate | Yes | Complete independent scenarios below |
-| POST /heat/assess | Provider required | `{ "profile": <the complete profile from either request below> }` |
-| POST /protection/plan | Provider required | Same complete profile wrapper; same-day schedules only |
+| GET /weather | Integrated real provider | latitude and longitude query values |
+| POST /heat/assess | Integrated real provider | `{ "profile": <the complete profile from either request below> }` |
+| POST /protection/plan | Integrated real provider | Same complete profile wrapper; same-day schedules only |
 
 Copy-ready, valid JSON files, generated and schema-checked through the compiled Express app over HTTP:
 
@@ -141,6 +142,6 @@ Disclaimers: ESTIMATED_ADVISORY_ONLY and NOT_A_CERTIFIED_WORK_REST_PLAN. Optiona
 
 ## Integration gate
 
-Developer B and frontend still need to confirm the documented contracts; no contract was changed in this phase. Once the provider is available, verify real observations, hourly timezone mapping, cache reuse/staleness and upstream failure behavior with its actual implementation. The verification runner currently checks LIVE/CACHED transport behavior with clearly labelled inline fixtures, not real external weather. It also proves HeatLab succeeds when the fixture provider fails.
+Developer B's actual implementation has now been checked against these contracts. Real observations, hourly mapping, cache reuse/original age and actual frontend rendering were verified; expiry/timeouts/failure behavior also have deterministic provider tests. The older verification runner's inline fixtures remain fixture evidence and must not be relabeled as external checks. Database read-only and authorized isolated-write verification remain separate gates.
 
 P1 /enterprise/plan remains deferred until an enterprise contract is jointly agreed. The remote is configured; feature/frontend-reengineering preserves the frontend/main ancestry and imports unchanged core files deliberately. See [current integration status](INTEGRATION_STATUS.md); [GIT_SYNC.md](GIT_SYNC.md) records the earlier synchronization procedure.

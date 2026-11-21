@@ -1,5 +1,7 @@
 # HeatLab demonstration
 
+Current integrated startup/build instructions are in [FINAL_RELEASE.md](FINAL_RELEASE.md). Fresh clones install both root and backend dependencies and compile root infrastructure before backend startup. Real weather/dashboard/planning are now additionally available; the independent HeatLab sequence below remains unchanged. Database access and enabled community writes are not prerequisites for the flagship demonstration.
+
 Both scenarios below are SIMULATION. Requests and complete responses were captured from the compiled application over HTTP by [the verification runner](../backend/scripts/verify-integration.mjs). The engine and established contracts were not changed. Use [verification.json](../backend/examples/integration/verification.json) for execution provenance and generation time.
 
 | Same simulated weather | Value |

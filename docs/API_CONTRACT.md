@@ -1,6 +1,6 @@
 # SunShield shared API contract
 
-Developer A owns the Express foundation, shared schemas, heat engine, protection planner and simulation. Developer B owns weather, Prisma/database, Safe Zones, community reporting and enterprise dashboard. The source of truth for exact JSON validation is `backend/src/schemas/`; TypeScript types are inferred in `backend/src/types/index.ts`.
+Developer A owns the Express foundation, shared schemas, heat engine, protection planner and simulation. Developer B owns weather and database/Safe Zone services. Heat/weather validation remains in `backend/src/schemas/`; Safe Zone request validation is in `src/routes/safezone.routes.ts`. Both are composed in one application. See [current integration status](INTEGRATION_STATUS.md).
 
 ## Preserved TRD endpoints
 
@@ -9,9 +9,14 @@ Base URL: `http://localhost:8000/api/v1`.
 | Method | Path | Request | Response |
 | --- | --- | --- | --- |
 | GET | /health | None | `{status:"UP",application:"SunShield",version:"1.0.0"}` |
+| GET | /weather | latitude and longitude query numbers | Existing WeatherResponse contract below; LIVE/CACHED only |
 | POST | /heat/assess | `{profile:WorkerProfile}` | `{dataMode,assessment}` |
 | POST | /protection/plan | `{profile:WorkerProfile}` | `{dataMode,timezone,workDate,workStart,workEnd,timeline,disclaimerCode,...}` |
 | POST | /simulation/evaluate | `{profile:WorkerProfile,weatherOverride:{temperatureC,humidityPercent,windSpeedKmh}}` | `{dataMode:"SIMULATION",assessment}` |
+| GET | /safe-zones | latitude, longitude; optional radiusKm (0–100), category, availabilityStatus, includeDemo, limit (1–100) | `{distanceMethod:"STRAIGHT_LINE",facilities:[...]}` |
+| GET | /safe-zones/:id | UUID path | Original facility detail, including verification metadata |
+| POST | /safe-zones | Existing strict Developer B submission schema | 201 PENDING/UNKNOWN if enabled; default 503 COMMUNITY_WRITES_DISABLED |
+| POST | /safe-zones/:id/reports | `{availabilityStatus,comment?}` | 201 report if enabled; does not verify facility; default disabled |
 
 `WorkerProfile` uses the exact TRD camelCase properties and enum values. Every profile property is required, including city and IANA timezone. Times are HH:mm. MVP supports same-day schedules only; equal or overnight times return 422. Inputs are strict objects; unsupported fields are rejected. No symptom input is supported.
 
@@ -41,4 +46,4 @@ The plan covers the local date at request time in the profile timezone and exact
 
 All errors: `{error:{code,message,requestId}}`; no stacks or secret values. 400 malformed JSON, 413 body size, 422 validation, 404 unknown route, 429 rate limit, 500 unexpected failure, 503 missing/unavailable provider. Body limit 32 KB. Requests limited to 120/minute per IP. Configure trusted proxy deliberately with hosting infrastructure before deployment.
 
-Developer B and frontend integration must review the finalized timestamp, optional-field and supplementary response details above before merging. No external teammate messages have been sent. Weather GET, Safe Zone and enterprise dashboard routes will be registered only when Developer B supplies implementations. The optional enterprise planning endpoint remains deferred because its request and response require team agreement. No Prisma schema or migrations are created by Developer A.
+Weather GET and Safe Zone routes are now registered using the reviewed Developer B implementation. Weather/assessment/planning share one provider instance. Safe Zone storage failures return sanitized 503 SAFE_ZONES_UNAVAILABLE without blocking other endpoints. Community writes default disabled; if explicitly enabled, a shared 10-write/15-minute/IP limiter supplements the common 120/minute API limiter. DEMO discovery is excluded by default, REJECTED facilities are excluded, and PENDING suggestions are not verification. No real database/write success is claimed without authorized verification. Existing weather/assessment/plan payloads and engine rules are unchanged. Enterprise remains deferred. Team handoffs are recorded in [issue #1](https://github.com/Madhav-87/sunshield-hackathon/issues/1).

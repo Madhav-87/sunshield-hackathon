@@ -1,5 +1,7 @@
 # Frontend test and acceptance report
 
+Full-stack integration update: the same **39 Chromium** cases passed against the composed weather/Safe Zone application, alongside **46 frontend**, **85 backend** and **22 infrastructure** passing tests. The old 64/six-provider/nine-infrastructure counts are included, not additional totals. One database test remains skipped without authorized credentials. Actual weather/dashboard/planner screenshots and HTTP responses are in [release evidence](release-evidence/README.md). Safe Zone unavailable/write-disabled errors are now 503 rather than the earlier unmounted 404. Historical rewrite checks below retain their original scope.
+
 Final independent acceptance update, 21 November: **39 Chromium cases passed** (the original 28 plus 11 new checks), all **46 frontend** and **64 backend tests** passed again, and frontend typecheck/lint/build passed. Two new regression cases reproduced obsolete HeatLab reset warnings and hidden UNKNOWN planner stop-work advice before correction; all new regressions now pass. See [detailed acceptance report](FINAL_ACCEPTANCE.md). Counts below describe the earlier rewrite baseline unless superseded here. No new external-service or physical-device success is claimed.
 
 Executed locally on Windows, Node.js 24.13.0, Chromium/Chrome for Testing 159 via Playwright. These are actual results, not projected checks.

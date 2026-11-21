@@ -1,5 +1,9 @@
 # Frontend security audit
 
+Subsequent integration note: Developer B's provider and corrected Safe Zone code are now reviewed/composed, with default-disabled writes, bounded/sanitized storage failures and unchanged engine safety. Actual weather/assessment/plan verification and current database/deployment limits are in [the release report](FINAL_RELEASE.md). The earlier audit below retains its original execution scope and is not a new security certification.
+
+Root/backend production dependency review additionally found the Prisma/Effect ReDoS chain, addressed through an exact Effect 3.22.1 override per [the reviewed advisory](https://github.com/advisories/GHSA-7589-6fvf-x4pw). Fresh root/backend production audits each returned zero reported vulnerabilities after that patch; Prisma was not downgraded. No new frontend dependency changed.
+
 Scope: the rewritten frontend and its integration boundary, 21 November 2026. This is an engineering audit and regression record, not a guarantee that the application is completely secure.
 
 ## Corrections verified

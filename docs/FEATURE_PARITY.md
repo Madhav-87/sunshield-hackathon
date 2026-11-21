@@ -1,5 +1,7 @@
 # Frontend migration inventory
 
+Current integration update: live weather, occupational assessment and hourly planning are now implemented and locally verified; Safe Zone routes are mounted but await authorized database configuration. The dependency column below records the original rewrite baseline. See [current release](FINAL_RELEASE.md) for present states.
+
 Baseline: frontend-integration 8429fcb. Original source remains on that branch and in Git history. The rewrite uses the same navy/amber/teal identity, card-based dashboard, split HeatLab comparison, map/list layout, mobile navigation and Plus Jakarta Sans typography. No separate Stitch export or image assets were present beyond the existing markup/CSS; those files are the visual reference.
 
 Design direction: restrained field intelligence, with a navy guidance card and amber environmental readout as the recognizable anchor. Feasibility assessment: impact 4, fit 5, feasibility 5, performance 4, consistency risk 3 (DFII 15). Existing brand requirements take precedence over the design skill's generic typography suggestions.

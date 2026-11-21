@@ -4,7 +4,7 @@ Status: desktop Chromium/mobile viewport checks were executed. No physical Andro
 
 ## Preferred: USB forwarding, without LAN exposure
 
-Use the existing [local startup commands](FINAL_RELEASE.md#exact-local-demonstration-startup): frontend at localhost:5173, compiled backend at localhost:8000, VITE_USE_MOCKS=false, VITE_API_BASE_URL=http://localhost:8000/api/v1 and exact backend FRONTEND_URL=http://localhost:5173.
+Use the existing [local startup commands](FINAL_RELEASE.md#dependable-demo): frontend at localhost:5173, compiled backend at localhost:8000, VITE_USE_MOCKS=false, VITE_API_BASE_URL=http://localhost:8000/api/v1 and exact backend FRONTEND_URL=http://localhost:5173. Fresh installation now includes root and backend dependencies plus the root infrastructure build.
 
 1. Connect your Android phone by USB. On that phone enable Developer options and USB debugging, and accept only the trusted development computer's debugging prompt.
 2. On desktop Chrome open chrome://inspect/#devices, enable Discover USB devices, then Port forwarding.

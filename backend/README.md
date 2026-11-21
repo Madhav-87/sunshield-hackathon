@@ -1,70 +1,38 @@
-# SunShield backend
+# SunShield consolidated backend
 
-Developer A core intelligence MVP. Node.js 24 LTS, Express 5, strict TypeScript, Zod, Vitest and Supertest. Supabase PostgreSQL and Prisma are the agreed persistence stack; Developer B owns their integration. No database connection is needed for health, simulation or the engine tests.
+Node.js 24, Express, strict TypeScript, Zod, Prisma/PostgreSQL. One application composes Developer A's engine and Developer B's provider/Safe Zone services. Health and HeatLab remain independent of external availability.
 
-## Local development
+## Install and build
 
-```powershell
-cd backend
-npm ci
-Copy-Item .env.example .env
-npm run dev
-```
+From repository root:
 
-Other commands: `npm run typecheck`, `npm run build`, `npm start`, `npm test`. Start requires a completed build. Node 24 is required. Real credentials belong only in the ignored `.env`; the checked-in example intentionally leaves DATABASE_URL empty. Prisma and its client are installed but no schema, migrations or generated client are provided by Developer A.
+~~~powershell
+npm.cmd ci
+npm.cmd --prefix backend ci
+npm.cmd run build
+npm.cmd start
+~~~
 
-Default environment: NODE_ENV=development; PORT=8000; FRONTEND_URL=http://localhost:5173; OPEN_METEO_BASE_URL=https://api.open-meteo.com/v1; WEATHER_CACHE_TTL_SECONDS=600. DATABASE_URL is optional for the current modules. Developer B must supply any additional database variables. Environment validation reports invalid names without exposing values.
+Root package owns PostgreSQL adapter/Prisma/Safe Zone dependencies; backend owns application/engine dependencies. Root source and generated Prisma compile to dist/src and dist/generated, with declarations. Backend builds to backend/dist and imports those modules. Deploy both outputs and both production dependency trees. Production starts JavaScript, not tsx; no second Express server exists.
 
-## Endpoints and frontend integration
+For watch mode, first build infrastructure, then npm run dev inside backend. Frontend starts separately with http://localhost:8000/api/v1 and VITE_USE_MOCKS=false.
 
-| Method | Path | State |
-| --- | --- | --- |
-| GET | /api/v1/health | Available independently |
-| POST | /api/v1/heat/assess | Requires injected real WeatherProvider |
-| POST | /api/v1/protection/plan | Requires injected real WeatherProvider |
-| POST | /api/v1/simulation/evaluate | Available independently |
+## Configuration and failure isolation
 
-Swagger: http://localhost:8000/docs/ . OpenAPI JSON: http://localhost:8000/openapi.json . Frontend API base: http://localhost:8000/api/v1 . Send application/json. Translate stable recommendation codes into en/hi/mr and always show the disclaimer and data mode. UNKNOWN means the assessment is unsupported and must never appear as clearance. The profile belongs in frontend local storage; this server does not persist it.
+[Example without secrets](.env.example). PORT supports platform assignment; FRONTEND_URL is an exact origin. OPEN_METEO_BASE_URL defaults to https://api.open-meteo.com/v1. WEATHER_CACHE_TTL_SECONDS is validated 1–3600, default 600. One factory instance is shared by weather/assessment/planning, with five-second timeout, validated LIVE/CACHED data, original timestamps and no synthetic fallback.
 
-Try HeatLab:
+DATABASE_URL is the application/pool connection; DIRECT_URL is used by root Prisma CLI. Process variables and backend/.env win over the optional ignored root .env fallback. Never put secrets in frontend, VITE variables, commits, issues or logs.
 
-```powershell
-Invoke-RestMethod -Method Post -Uri http://localhost:8000/api/v1/simulation/evaluate -ContentType application/json -Body (Get-Content -Raw examples/heatlab.json)
-```
+Safe Zone services load lazily. Missing/unavailable storage returns sanitized 503 without blocking other APIs. Connection/query/operation bounds and existing graceful shutdown handle storage failures. COMMUNITY_WRITES_ENABLED defaults false; enable only after authorized environment/data review. Community limiting is ten writes per fifteen minutes/IP in addition to the global API limit.
 
-Full contracts: [API_CONTRACT.md](../docs/API_CONTRACT.md). Rule methodology and safety limits: [HEAT_RULES.md](../docs/HEAT_RULES.md). Frontend and Developer B should review these before merging integration changes.
+## Endpoints and checks
 
-Integration pack: [exact provider handoff](../docs/INTEGRATION_HANDOFF.md), [HeatLab demonstration and captured HTTP examples](../docs/HEATLAB_DEMO.md), [safe Git synchronization](../docs/GIT_SYNC.md), and [current verification status](../docs/INTEGRATION_STATUS.md). After building, run `node scripts/verify-integration.mjs` to regenerate the examples and execute the independent HTTP checks. Its provider fixtures are verification-only and never connected to production startup.
+Health, GET /api/v1/weather, POST /api/v1/heat/assess, POST /api/v1/protection/plan and POST /api/v1/simulation/evaluate are implemented. GET /api/v1/safe-zones and /:id are mounted but require database configuration. Community POST routes are disabled by default. /openapi.json and /docs/ document the routes. Enterprise APIs remain deferred.
 
-## Developer B handoff
+UNKNOWN is unsupported, never clearance. No medical validation, safe-duration guarantee, symptom detection or certified work-rest claim exists. Show source/cache age, priorities and limitations.
 
-The Open-Meteo `WeatherProvider` implements `getWeather(latitude, longitude): Promise<WeatherResponse>` from [shared types](src/types/index.ts). Inject it into `createApp({weatherProvider})` at the existing composition point. A missing provider returns 503 from live endpoints, never invented weather. A returned observation with missing or invalid essential metrics yields UNKNOWN. Provider failures return sanitized 503 errors.
+Root checks: npm run typecheck, npm test, npm run db:validate, npm run db:generate. Root read-only database testing requires RUN_DATABASE_INTEGRATION_TESTS=true and authorized credentials. Backend checks: npm run typecheck, npm test, npm run build. Frontend checks run in frontend with its own configuration; npm run test:e2e owns server startup and requires ports 8000/5173 free.
 
-## Open-Meteo provider module
+Current totals: 85 backend, 22 infrastructure, 46 frontend, 39 Chromium passing; one database test skipped. No new migration, seed or database reset is required. Inspect authorized migration status before any database action.
 
-The production provider is exported from [`src/services/open-meteo-weather.provider.ts`](src/services/open-meteo-weather.provider.ts). Inject its factory result at the existing application composition point:
-
-```ts
-import { createApp } from './app.js';
-import { createOpenMeteoWeatherProvider } from './services/open-meteo-weather.provider.js';
-
-const weatherProvider = createOpenMeteoWeatherProvider();
-const app = createApp({ weatherProvider });
-```
-
-No API key is required for the public Open-Meteo forecast endpoint. `OPEN_METEO_BASE_URL` defaults to `https://api.open-meteo.com/v1`; `WEATHER_CACHE_TTL_SECONDS` defaults to `600` and accepts values from 1 through 3600. The upstream request has a fixed five-second timeout. The provider validates normalized output with the shared weather schema, reports successful upstream reads as `LIVE`, and reports in-TTL location cache hits as `CACHED` while retaining the original `fetchedAt` and observation timestamps. Upstream failures reject without supplying fallback weather.
-
-Developer B owns weather normalization/cache, Supabase connectivity, Prisma schema and migrations, Safe Zones, distance calculations, community reports, employer dashboard and infrastructure. Those files are not implemented here. The weather, Safe Zone and enterprise dashboard routes are not registered. The optional enterprise planning endpoint is deferred pending team agreement on its payload.
-
-## Limitations and next work
-
-The occupational rules are unvalidated prototype policy, not medical guidance or certified work-rest limits. No medical probabilities, WBGT estimates, symptom detection or guaranteed safe durations. Heat index has a conservative reporting envelope. No mandatory shift changes. Same-day schedules only; overnight shifts return 422. Planner uses the current local workday; ambiguous/nonexistent DST boundaries return 422. Forecast gaps remain UNKNOWN. Detailed source limitations are included in every assessment.
-
-Next priorities:
-1. Developer B and frontend review the completed timestamp and supplementary response contracts.
-2. Inject Developer B's live weather provider and run real-weather integration checks.
-3. Integrate Developer B's Safe Zones and database modules, registering their routes centrally.
-4. Agree optional enterprise planning payload and implement it after P0 integration.
-5. Configure deployment origin, HTTPS, provider timeouts and trusted proxy behavior with Developer B; perform mobile frontend acceptance and seek expert occupational health validation before real-world use.
-
-Tests use deterministic fixtures and an injected clock, with no database or external requests. Verification results are recorded in [IMPLEMENTATION.md](../docs/IMPLEMENTATION.md). Tests do not establish medical validity.
+[Release/startup/deployment handoff](../docs/FINAL_RELEASE.md), [HTTP/screenshots](../docs/release-evidence/README.md), [provider contract](../docs/INTEGRATION_HANDOFF.md), [API contract](../docs/API_CONTRACT.md), [safety methodology](../docs/HEAT_RULES.md).

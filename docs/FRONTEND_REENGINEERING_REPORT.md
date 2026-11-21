@@ -1,5 +1,7 @@
 # SunShield frontend reengineering report
 
+Historical rewrite report: subsequent full-stack integration has delivered and locally verified Developer B's real weather provider, live assessments/plans and compiled Safe Zone routing. Read [current release status](FINAL_RELEASE.md) and [actual HTTP/screenshots](release-evidence/README.md) for present integration readiness; earlier missing-provider descriptions below refer to the rewrite baseline.
+
 ## Outcome and scope
 
 The frontend is now a native React/TypeScript application on feature/frontend-reengineering. All eleven product routes are migrated. The original frontend remains available at frontend-integration commit 8429fcb. No deployment was performed. The integrated frontend is verified for real health/HeatLab; the complete live-weather/database MVP remains blocked by unavailable backend composition and employer contracts.

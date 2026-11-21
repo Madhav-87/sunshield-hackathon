@@ -1,121 +1,135 @@
-# SunShield final hackathon release
+# SunShield final full-stack release
 
-Release Phase 2: deadline extended to **00:00 IST, 22 November 2026**. The previous 22:00 deadline is superseded. Targets: essential integration by 23:00 on 21 November, QA/deployment by 23:40, development freeze at 23:50, and a ten-minute submission buffer. This release preserves the verified frontend and engine. It does not declare unavailable external integrations complete.
+Deadline: **00:00 IST, 22 November 2026**. Targets: integration 23:00, QA/deployment 23:40, freeze 23:50.
 
-Independent acceptance update: two reproduced frontend presentation defects were corrected without changing the engine: reset clears old validation warnings, and UNKNOWN planner STOP_UNSAFE_ACTIVITY remains visible before expanding details. The expanded **39-case Chromium suite**, all **46 frontend tests** and all **64 backend tests** pass. See [acceptance findings and exact changed files](FINAL_ACCEPTANCE.md) and [Android testing preparation/status](ANDROID_TESTING.md). No physical-device, external-service or deployment result is inferred from these checks.
+## Git and method
 
-## Phase 2 coordination and current gate
+Continue on integration/final-release. Executable milestones: acceptance 5f26712; weather integration 309c84c; compiled Safe Zone integration 8493165; secure configuration b64eb17; dependency security patch 832a277000b35381c659d65dc2c4cf20befbfdb9. Use the branch's latest HEAD, including subsequent evidence/documentation, for final QA.
 
-Fresh remote inspection on 21 November at 21:45 IST found no new Developer B or C branch or commit. The advertised branches were main, frontend-integration, feature/core-intelligence, feature/frontend-reengineering and integration/final-release. The working branch remains integration/final-release; the backup tag is preserved.
+Developer B's exact commits 8e16ade6aa1735ebb5558aa8e931e2f56f463252 and 5b32a8964c161b15af48fdc4a690deb28b09cbfb were reviewed. Their branch shares ancestor 2c9f8a3, so normal no-fast-forward merge 4ac76a8 was used. No unrelated-history merge or repeated Developer A import occurred. Main, frontend-integration, Developer B's branch and backup/frontend-verified-20261121-2c9f8a3 are unchanged. No force-push; main requires explicit approval.
 
-[Team coordination issue #1](https://github.com/Madhav-87/sunshield-hackathon/issues/1) requests the actual provider and corrected infrastructure branch/commit/export paths from Developer B, and independent QA/deployment configuration and branch/commit from Developer C. The repository owner is mentioned to route the request; no individual Developer C identity or private messaging channel was available. No secrets are requested in GitHub. Current integration commit shared with the team: c153b9e7174c6e27e99057f33ac762aafb7ebf41. Subsequent completed integrations will be shared on that issue.
+The [exact changed-file inventory](release-evidence/changed-files.txt) records the combined changes since the preserved acceptance snapshot 5f26712. It includes Developer B's provider/tests/schema/search corrections; root/backend build manifests and security patch locks; central route/composition/environment/OpenAPI integration and tests; frontend acceptance fixture expectations; and release documentation/evidence. Engine formulas, thresholds and occupational rules are unchanged.
 
-The current blocker is delivery of those modules and authorized test/hosting configuration. No new provider, cache, database architecture or deployment pipeline is being implemented in parallel with their ownership. Re-fetch and inspect their commits before integration; do not assume the earlier findings remain accurate once corrected modules arrive. No new infrastructure tests were supplied yet.
+## Application and deployment structure
 
-Phase 2 checks rerun: all **64 original backend tests**, all **46 frontend tests**, the full **28-case Chromium suite**, and Developer B's existing **9 router/distance tests** pass. The 9 infrastructure tests ran in the existing isolated dependency-installed review snapshot after verifying its source, tests, Prisma schema and migration hashes match the preserved root files. The router tests mock the services; they do not establish database connectivity or fix the known search defect. Backend typecheck and production build, frontend production build/TypeScript, and actual compiled-app HTTP health/HeatLab checks passed again. The mandatory comparison still returns CRITICAL/HIGH with heat index 40.68 C and SIMULATION, and the browser case checks all limitations. Source files and dependencies were unchanged in Phase 2. Existing bundle warnings remain.
+One [Express app](../backend/src/app.ts), launched by [server.ts](../backend/src/server.ts), shares one provider across weather/assessment/planning. Existing middleware, request IDs, exact CORS, errors, limits, OpenAPI and shutdown are preserved. Loaded database storage is disconnected during shutdown.
 
-Rechecks through 21:49 IST found no new remote implementation, open pull request or team reply. These are the latest observed results, not a claim that teammate work cannot arrive later. Fetch again when Developer B/C report their pushed commits. Fresh external weather/database checks are blocked until the real implementation/configuration is supplied.
+Developer B's root infrastructure and generated Prisma compile to root dist/src and dist/generated. Backend compiles to backend/dist and imports these compiled modules. **The backend hosting project must retain the repository-root package, backend package, both production dependency installations and both dist outputs.** Deploying backend/dist alone is incomplete. Runtime uses JavaScript, not tsx. Database services load only on valid Safe Zone operations; startup does not require a successful connection. Connection/query deadlines and sanitized 503s isolate failures.
 
-Release recommendation while this gate remains unresolved: ready for the verified local HeatLab demonstration; **not ready to claim full live-weather/database release or verified public deployment**. Main requires explicit user approval and must remain unchanged.
+Fresh Node.js 24 install/build/start from the repository root:
 
-## Repository and application
-
-- Final branch: `integration/final-release`, created from verified frontend commit `2c9f8a323d128ade0820725e687d1e0a0fd5c8ef` after inspecting every advertised remote branch.
-- Pushed annotated backup tag: `backup/frontend-verified-20261121-2c9f8a3`, pointing to that verified commit.
-- `feature/frontend-reengineering` is fully pushed. `main` remains `9961079` and `frontend-integration` remains `8429fcb`; neither was merged, reset or force-pushed.
-- Developer A's backend was already imported in `f074b7f`; it was not imported again. Developer B's root source, package/configuration, Prisma and SQL are preserved unchanged.
-- The only composed Express application is [backend/src/app.ts](../backend/src/app.ts), launched by [backend/src/server.ts](../backend/src/server.ts). The root Safe Zone modules remain unmounted services, not a second running backend.
-- Final phase changes are this release handoff, the status update and a browser assertion that every returned simulation limitation/disclaimer is visible. No product feature or engine rule was changed.
-
-## Available endpoints and blockers
-
-| Endpoint | Release state |
-| --- | --- |
-| GET /api/v1/health | HTTP 200; independent of database/weather |
-| POST /api/v1/simulation/evaluate | HTTP 200; actual engine, runtime-validated frontend |
-| GET /openapi.json and /docs/ | HTTP 200 |
-| POST /api/v1/heat/assess | Intentional HTTP 503 WEATHER_PROVIDER_UNAVAILABLE |
-| POST /api/v1/protection/plan | Intentional HTTP 503 WEATHER_PROVIDER_UNAVAILABLE |
-| GET /api/v1/weather | HTTP 404; no provider/route implementation available |
-| Safe Zone discovery/details/submission/report routes | Unmounted; HTTP 404 |
-| Enterprise APIs | Unimplemented; future scope |
-
-Remote inspection found only main, frontend-integration, feature/core-intelligence and feature/frontend-reengineering before creating the final branch. No actual Open-Meteo WeatherProvider, normalization/cache implementation or newer Developer B fix was available. No competing provider was created. Live observations, hourly forecasts, cache reuse and upstream failure behavior remain unverified against external services.
-
-No DATABASE_URL or DIRECT_URL was present in this process or local environment files; no database connection, migration, seed or write was attempted. Safe Zone search still caps the database selection before distance filtering, and the committed schema/migration alignment findings remain unresolved. See [Developer B review](DEVELOPER_B_REVIEW.md). These routes must remain unmounted until the findings, shared validation/security and actual database connectivity are verified.
-
-No public backend URL or linked Vercel project/configuration was available. No deployment was attempted and no public deployment URL is verified. The backend already supports platform PORT and exact FRONTEND_URL CORS configuration. For a later deployment, select frontend as the Vercel root, set its real HTTPS VITE_API_BASE_URL and VITE_USE_MOCKS=false, configure backend secrets outside the frontend, and narrow CSP connect-src to the real API and required services. Do not deploy the localhost or placeholder configuration. Verify public health, simulation, CORS and browser communication before claiming release.
-
-## Final verification
-
-- Backend typecheck, production build and all original **64 tests** passed again.
-- Frontend typecheck, lint and all **46 tests** passed again.
-- The previously completed **28-case Chromium suite** remains the full acceptance baseline. No production source changed after that baseline.
-- Production-preview actual-engine comparison and Hindi/Marathi safety checks passed again. The comparison additionally verifies every returned disclaimer/limitation is visible in both cards.
-- Direct HTTP checks against the compiled application passed: health; both simulation scenarios; CORS/request-ID headers; invalid input 422; absent-provider assessment/planning 503; weather/Safe Zones 404; Swagger/OpenAPI 200.
-- Both scenarios used actual engine output at 35 C, 50% humidity and 5 km/h: heat index **40.68 C**, environmental advisory HIGH; construction **CRITICAL** with STOP_UNSAFE_ACTIVITY; vendor **HIGH** with REDUCE_STRENUOUS_ACTIVITY. Both include SIMULATION, simulated-condition and prototype/medical/work-permission limitations.
-- Frontend production build passes. Existing large-main-chunk and third-party comment-annotation warnings remain documented, not suppressed. Dependency audit results in the [test report](FRONTEND_TEST_REPORT.md) are from the earlier audit execution; no dependencies changed in this final phase.
-
-UI-only weather/map/plan fixtures from the broader acceptance suite do not establish live weather or database integration. Chromium verification is not a formal accessibility, medical or cross-browser certification.
-
-## Exact local demonstration startup
-
-Use Node.js 24 and two PowerShell terminals. Dependencies are already installed in this workspace; run `npm.cmd ci` once in each directory for a fresh clone. Do not run the root database package as another server. Ports 8000 and 5173 must be free.
-
-Terminal 1, compiled backend:
-
-```powershell
-Set-Location D:\codestorm\backend
-$env:NODE_ENV='production'
-$env:PORT='8000'
-$env:FRONTEND_URL='http://localhost:5173'
+~~~powershell
+npm.cmd ci
+npm.cmd --prefix backend ci
 npm.cmd run build
 npm.cmd start
-```
+~~~
 
-Terminal 2, frontend local demonstration:
+Build stages need Prisma/TypeScript dev dependencies. Root build invokes backend build, which generates Prisma and compiles root infrastructure first. Preserve both production dependency trees if pruning dev dependencies afterward.
 
-```powershell
+## Environment
+
+| Setting | Purpose/default |
+| --- | --- |
+| PORT | Platform port; default 8000 |
+| FRONTEND_URL | Exact origin; default http://localhost:5173 |
+| OPEN_METEO_BASE_URL | https://api.open-meteo.com/v1; HTTPS required |
+| WEATHER_CACHE_TTL_SECONDS | Validated 1–3600, default 600 |
+| DATABASE_URL | Authorized application/pool connection |
+| DIRECT_URL | Authorized direct connection for root Prisma CLI |
+| COMMUNITY_WRITES_ENABLED | false by default |
+| RUN_DATABASE_INTEGRATION_TESTS | Explicit opt-in to read-only root test |
+| VITE_API_BASE_URL | Public API URL only; real HTTPS URL for hosting |
+| VITE_USE_MOCKS | false |
+
+Process variables/backend/.env take precedence over an optional ignored root .env fallback shared with Prisma. Keep credentials out of Git, issues, screenshots, frontend and VITE variables. No secrets are in examples. Never enable community writes without reviewed environment/data authorization.
+
+## Actual local verification
+
+Runtime: **Node v24.13.0 / npm 11.4.1**; root installation/build/generation executed on Node 24. Engine restrictions and dependency versions were not relaxed.
+
+Final startup limitation: compiled-app HTTP verification and six focused production-preview safety cases passed. A later attempt to restart via the repository-root npm start with NODE_ENV=production was rejected by automatic approval review as "blocked by policy", with no more specific reason. The immediate HTTP retry received connection refused. That production-mode root startup attempt is **not verified**, and the backend is currently stopped after the test harness cleanup; run the documented start command manually for the local demo. No alternate command was used to bypass the rejection.
+
+| Endpoint | Actual result |
+| --- | --- |
+| GET /api/v1/health | 200 UP; liveness only |
+| GET /api/v1/weather | 200 real Open-Meteo; LIVE then CACHED verified |
+| POST /api/v1/heat/assess | 200 for five representative profiles |
+| POST /api/v1/protection/plan | 200 using actual hourly forecasts |
+| POST /api/v1/simulation/evaluate | 200 independent real engine |
+| Safe Zone discovery/details | Mounted; 503 without local credentials |
+| Both community POST routes | 503 disabled-write guard; no actual write |
+| Invalid coordinates/IDs | 422 with matching request IDs |
+| /openapi.json and /docs/ | 200 |
+
+[Actual HTTP bodies and screenshots](release-evidence/README.md) support these local claims. Global/community rate limits, malformed JSON/body size, sanitized dependency failures and request IDs also pass backend tests.
+
+Real Pune observation at 22:15 IST: **21.5 C, 51% RH, 5 km/h**; **48 hourly periods**. Cache hits retain retrieval/observation timestamps. Provider tests verify expiry, timeouts including non-settling fetches, malformed/HTTP failures and location separation. No fabricated fallback exists.
+
+Construction, vendor, delivery, agriculture and fixed road-work profiles correctly returned CAUTION under these cool observations, with different occupational factors. Heat index was unavailable outside its reporting envelope; no rule was changed to create a dramatic output. Actual plans retained 09:15–17:45 boundaries for FIXED, FLEXIBLE and EMPLOYER_CONTROLLED schedules. Plans remain estimates, not certified work-rest schedules.
+
+## Non-overlapping regression totals
+
+- **85 backend passed**: includes 64 original, six provider, nine weather-route and six Safe Zone composition/rate-limit checks.
+- **22 infrastructure passed**: includes the old nine; do not count them again.
+- **One database integration test skipped**, not passed.
+- **46 frontend passed**.
+- **39 Chromium passed**: original 28 plus eleven acceptance checks.
+- **Six focused production-preview cases also passed** with the prepared local CSP: real HeatLab, Hindi/Marathi, reset and UNKNOWN planner prominence. These are repeat checks, not six additional unique cases.
+- Root/backend TypeScript and production build, Prisma validation/generation, frontend typecheck/lint/format/build passed. Existing bundle-size/third-party comment warnings remain.
+
+The repository-wide test failure was incorrect discovery: root Vitest ran nested frontend tests without jsdom and ignored diagnostic probes. Root discovery is now limited to root tests, while each package runs its own valid suite. No storage validation or regression was disabled.
+
+Final dependency review found three linked high audit findings through Prisma's Effect 3.20.0 dependency. [GHSA-7589-6fvf-x4pw](https://github.com/advisories/GHSA-7589-6fvf-x4pw) identifies 3.22.1 as patched. Root and backend override only Effect to 3.22.1; Prisma stays 7.10.1 and unrelated versions/platform metadata are preserved. Both Node 24 clean installs, Prisma validation/generation and infrastructure tests passed with the patch. Fresh root and backend production audits each report **zero vulnerabilities** at execution time. This is not a general security guarantee or a new frontend audit.
+
+## Database and Safe Zone status
+
+Reviewed search uses spatial candidate bounds, pagination of all candidates, exact Haversine radius filtering and distance ordering before output limiting. Tests cover a nearby match after the first 500 records, dateline behavior, radius/limits and demo/rejected exclusion. Schema precision/index mappings match committed SQL in database-free generation. No migration was run.
+
+Developer B reports successful Supabase read-only access, three DEMO facilities, zero reports, one migration and empty database diff. **Developer A has not independently reproduced those database results**: authorized connection configuration is still absent here. Secure provisioning is requested in issue #1 and through a metadata-only user-input request. No connection value belongs in those channels.
+
+Empty real discovery is valid with only DEMO data. No demo was relabeled or seeded as a verified resource. Reads are mounted; writes remain disabled by default, with ten-per-fifteen-minute/IP shared limiting when explicitly enabled. Submission/report success is fixture-tested only. Actual writes require an authorized isolated environment/data. No reset, truncation, migration or database write occurred.
+
+## Dependable demo
+
+Terminal 1 after installation, from repository root:
+
+~~~powershell
+Set-Location D:\codestorm
+$env:PORT='8000'
+$env:FRONTEND_URL='http://localhost:5173'
+$env:COMMUNITY_WRITES_ENABLED='false'
+npm.cmd run build
+npm.cmd start
+~~~
+
+Terminal 2:
+
+~~~powershell
 Set-Location D:\codestorm\frontend
 $env:VITE_API_BASE_URL='http://localhost:8000/api/v1'
 $env:VITE_USE_MOCKS='false'
 npm.cmd run dev -- --host localhost --port 5173 --strictPort
-```
+~~~
 
-Open `http://localhost:5173/heatlab`. The frontend uses the Vite development server for this simple local startup; this does not claim public hosting. The backend runs compiled production code.
+Open http://localhost:5173/heatlab. Evaluate defaults **35 C / 50% / 5 km/h**:
+1. Both cards: SIMULATION, identical **40.68 C** heat index.
+2. Construction: **CRITICAL**, stop unsafe work and move away from exposure.
+3. Vendor: **HIGH**, reduce strenuous activity and coordinate protection.
+4. Show every prototype, medical, work-permission and hydration limitation.
+5. Edit, evaluate, reset and refresh; saved worker profile stays independent.
+6. Switch en/hi/mr and show SOS without placing an emergency call.
 
-To instead verify the built frontend automatically, stop both servers, then from frontend run:
+HeatLab does not depend on weather/database. Live dashboard/planning can additionally show actual source/cache/observation timestamps while Open-Meteo is reachable. Show Safe Zone unavailability honestly until credentials are verified. [Physical-phone testing](ANDROID_TESTING.md) remains unexecuted.
 
-```powershell
-$env:FRONTEND_E2E_PREVIEW='true'
-npm.cmd run test:e2e -- --grep 'actual backend HeatLab'
-```
+## Team handoff and release recommendation
 
-This builds and starts/stops both servers and checks the real engine through production-preview assets. Its explicit local CSP exception permits localhost:8000 and omits HTTPS upgrading only for local acceptance. Do not use this setting for public deployment.
+[Issue #1](https://github.com/Madhav-87/sunshield-hackathon/issues/1) shares exact commits and current structure with the repository owner for Developers C/D. Individual C/D identities/private channels and acknowledgment are not assumed.
 
-## Dependable walkthrough
+Developer C owns independent QA/approved hosting. Frontend Vercel root is frontend; retain monorepo fixture access for test TypeScript at build time. Set a real HTTPS API URL, mocks=false, exact CORS and host-specific trusted-proxy policy. Narrow CSP connect-src to real services. Verify public health, simulation and frontend API communication. **No deployment URL is verified.**
 
-1. Confirm `http://localhost:8000/api/v1/health` returns UP. Open HeatLab directly; onboarding, weather and database access are unnecessary.
-2. Use the default comparison preset: 35 C, 50%, 5 km/h. Scenario A is construction/HEAVY/direct sun/LIMITED water/UNAVAILABLE shade/employer-controlled schedule. Scenario B is street vendor/LIGHT/partial shade/AVAILABLE water and shade/flexible schedule.
-3. Select **Evaluate both scenarios**. The browser sends two independent actual POST requests. Confirm both cards say **SIMULATION · Not live weather** and show **40.68 C**.
-4. Show construction **CRITICAL** and **Stop unsafe work and move away from the exposure**. Show vendor **HIGH** and **Reduce strenuous activity**. HIGH still requires precautions.
-5. Show factors and all limitations below the recommendations: prototype rules, not medically validated, not permission to continue work, no guaranteed safe duration, heat index is not WBGT, unassessed personal factors, conscious-and-able-to-swallow hydration restriction, and simulated conditions. Guidance is estimated, not work clearance.
-6. Change a workload/access input and evaluate again to demonstrate actual engine computation. Reset returns to the default inputs; it does not modify the saved worker profile. A failed request displays an error and does not fabricate a result.
-7. SOS, language selection and native navigation are available. Present weather/planner/Safe Zone unavailable states honestly. Do not describe fixture-populated screenshots as live data.
+Developer D should use actual evidence screenshots and current local live-weather/plan claims. Keep CACHED/SIMULATION labels and prototype limitations. Do not claim verified real facilities, measured impact, medical validation or deployed integration.
 
-Optional API-only fallback, from backend in a third terminal:
+Remaining gates: authorized database read-only/migration-status verification, isolated-write authorization, Developer C QA/hosting/public verification, qualified translation/occupational review and real-device testing. Employer expansion, authentication, PWA, new visuals and optimization remain deferred.
 
-```powershell
-$api='http://localhost:8000/api/v1'
-Invoke-RestMethod "$api/health"
-foreach ($scenario in @('heavy','lower')) {
-  $body=Get-Content -Raw "examples/integration/heatlab-$scenario.request.json"
-  Invoke-RestMethod -Method Post -Uri "$api/simulation/evaluate" -ContentType application/json -Body $body
-}
-```
-
-## Future scope and immediate next steps
-
-Developer B supplies the compatible provider and fixes Safe Zone search/migration alignment; then integrate into the existing composition and verify actual services without making health/HeatLab depend on database startup. Employer planning, authentication expansion, PWA, extra animations/charts and noncritical optimization remain deferred. Public deployment requires real hosting/API configuration and verification. Qualified Hindi/Marathi review, other browsers and physical-device/assistive-technology testing remain pending.
-
-Further evidence: [integration contract](INTEGRATION_HANDOFF.md), [frontend test report](FRONTEND_TEST_REPORT.md), [security audit](FRONTEND_SECURITY_AUDIT.md), [feature parity](FEATURE_PARITY.md), [rewrite report](FRONTEND_REENGINEERING_REPORT.md).
+**Code ready for live-weather/independent HeatLab local demo and Developer C QA, with manual backend startup currently required; not yet a verified public full-stack release.**
