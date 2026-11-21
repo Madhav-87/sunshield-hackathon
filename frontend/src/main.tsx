@@ -1,12 +1,12 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App';
-import './app-extensions.css';
-import { restoreWorkerProfile } from './hooks/useWorkerProfile';
+import App from './app/App';
+import './styles/app.css';
+import 'leaflet/dist/leaflet.css';
+import './i18n';
 
 const root = document.getElementById('root');
 if (!root) throw new Error('SunShield root element is missing.');
-restoreWorkerProfile();
 
 createRoot(root).render(
   <React.StrictMode>

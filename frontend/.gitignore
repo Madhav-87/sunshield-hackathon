@@ -5,3 +5,6 @@ dist/
 !.env.example
 .venv/
 *.tsbuildinfo
+coverage/
+test-results/
+playwright-report/
