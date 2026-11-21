@@ -1,6 +1,6 @@
 # SunShield integration handoff
 
-Status: Developer B's reviewed provider and corrected Safe Zone infrastructure are integrated in one app. Actual Open-Meteo weather, assessments and hourly plans have been verified locally and rendered in the native frontend. Safe Zone routes are mounted with lazy storage and default-disabled writes; authorized database configuration is still unavailable to Developer A. Health and HeatLab remain independent. Existing engine and weather/assessment/plan contracts below are preserved. See [current status](INTEGRATION_STATUS.md), [deployment/startup handoff](FINAL_RELEASE.md) and [actual evidence](release-evidence/README.md). Team updates are in coordination issue #1.
+Status: Developer B's provider and corrected Safe Zone infrastructure are integrated in one app. Actual Open-Meteo weather, assessments and hourly plans are locally verified. Authorized root environment configuration now works, and actual Supabase reads, migration status, empty schema diff, DEMO exclusion/inclusion, existing details and native Safe Zone UI are independently verified. Three facilities remain DEMO; none is VERIFIED. Community writes remain disabled and unverified against actual isolated data. Health and HeatLab remain independent. Existing engine/API contracts are preserved. See [current status](INTEGRATION_STATUS.md), [release handoff](FINAL_RELEASE.md) and [actual evidence](release-evidence/README.md).
 
 ## Provider contract
 
@@ -142,6 +142,6 @@ Disclaimers: ESTIMATED_ADVISORY_ONLY and NOT_A_CERTIFIED_WORK_REST_PLAN. Optiona
 
 ## Integration gate
 
-Developer B's actual implementation has now been checked against these contracts. Real observations, hourly mapping, cache reuse/original age and actual frontend rendering were verified; expiry/timeouts/failure behavior also have deterministic provider tests. The older verification runner's inline fixtures remain fixture evidence and must not be relabeled as external checks. Database read-only and authorized isolated-write verification remain separate gates.
+Developer B's actual implementation has been checked against these contracts. Real observations, hourly mapping, cache reuse/original age and actual frontend rendering are verified; expiry/timeouts/failure behavior also have deterministic provider tests. The older runner's inline fixtures remain fixture evidence. The actual database read-only gate is now passed; authorized isolated-write verification and public deployment remain separate gates.
 
 P1 /enterprise/plan remains deferred until an enterprise contract is jointly agreed. The remote is configured; feature/frontend-reengineering preserves the frontend/main ancestry and imports unchanged core files deliberately. See [current integration status](INTEGRATION_STATUS.md); [GIT_SYNC.md](GIT_SYNC.md) records the earlier synchronization procedure.

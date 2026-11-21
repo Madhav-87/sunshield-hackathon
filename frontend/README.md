@@ -23,7 +23,7 @@ Copy-Item .env.example .env.local
 npm run dev -- --host localhost
 ```
 
-Open http://localhost:5173. Default API URL is http://localhost:8000/api/v1 and mocks default to false. Health and HeatLab are independent; real Open-Meteo dashboard/assessment/planning are integrated. Safe Zone reads are mounted but return unavailable until authorized storage is configured; community writes default disabled. Do not put database credentials or service-role keys in frontend environment files. Backend deployment requires the repository-root infrastructure build and both dependency trees; see the [release handoff](../docs/FINAL_RELEASE.md).
+Open http://localhost:5173. Default API URL is http://localhost:8000/api/v1 and mocks default to false. Health and HeatLab are independent; real Open-Meteo dashboard/assessment/planning are integrated. Local authorized Safe Zone storage is now configured and independently read-only verified: real-resource discovery is empty, while explicit DEMO inclusion shows three unverified demonstration records. Community writes remain disabled. Do not put database credentials or service-role keys in frontend environment files. Backend deployment requires repository-root infrastructure and both dependency trees; see the [release handoff](../docs/FINAL_RELEASE.md).
 
 HeatLab makes independent real POST /simulation/evaluate requests for each scenario. Its initial 35 C / 50% / 5 km/h comparison should display the actual prototype CRITICAL construction and HIGH vendor advisories with equal environmental indicators. These outputs are not calculated or hardcoded in React. Simulation does not modify the saved worker profile.
 

@@ -21,7 +21,7 @@ Deadline: 00:00 IST, 22 November 2026. Targets: integration 23:00, QA/deployment
 | POST /api/v1/heat/assess | 200; actual engine/provider |
 | POST /api/v1/protection/plan | 200; actual forecast |
 | POST /api/v1/simulation/evaluate | 200; independent SIMULATION |
-| GET /api/v1/safe-zones and /:id | Mounted; 503 without configured database |
+| GET /api/v1/safe-zones and /:id | 200 actual database reads; default DEMO exclusion and explicit inclusion verified |
 | Community POST routes | 503 COMMUNITY_WRITES_DISABLED by default |
 | Malformed coordinates/IDs | 422 with request IDs |
 | /openapi.json and /docs/ | 200; new endpoints documented |
@@ -29,7 +29,7 @@ Deadline: 00:00 IST, 22 November 2026. Targets: integration 23:00, QA/deployment
 
 ## Tests and evidence
 
-**85 backend**, **22 infrastructure**, **46 frontend**, **39 Chromium** passing. The original 64 backend, six provider and old nine infrastructure tests are included in those totals. **One read-only database test is skipped**, not passed. Node v24.13.0 / npm 11.4.1. Prisma validation/generation, root/backend TypeScript/build and frontend checks passed.
+**85 backend**, **23 root (22 infrastructure + one actual read-only database)**, **46 frontend**, **39 Chromium** passing. The original 64 backend, six provider and old nine infrastructure tests are included, not additional totals. The previously skipped database test was explicitly enabled and executed successfully. Node v24.13.0 / npm 11.4.1. Prisma validation/generation, root/backend TypeScript/build and frontend checks passed.
 
 Root Vitest previously discovered frontend tests without jsdom and ignored scratch probes. Its discovery is now scoped to root tests; real frontend/backend suites run separately. No storage validation was disabled.
 
@@ -37,12 +37,14 @@ Security patch: root/backend Effect transitive dependency is pinned to 3.22.1 fo
 
 [HTTP bodies/screenshots](release-evidence/README.md), [release/startup handoff](FINAL_RELEASE.md), [acceptance findings](FINAL_ACCEPTANCE.md).
 
-Six focused production-preview safety checks passed after integration. A subsequent production-mode repository-root startup command was blocked by automatic approval review ("blocked by policy"); its follow-up connection failed. The backend is presently stopped after test cleanup and requires manual startup. Earlier actual HTTP results remain recorded evidence, not a claim that the server is currently running.
+Six focused production-preview safety checks passed after integration. The previous agent production-mode startup was blocked and was not bypassed. A manually/externally started compiled server is now running and passed the full closure HTTP matrix against commit 992b484, including actual Supabase reads. Both services are available locally; no public deployment is inferred.
 
 ## Remaining gates
 
-Developer A still lacks authorized DATABASE_URL/DIRECT_URL locally. Developer B reports three DEMO facilities, zero reports, one applied migration and empty database diff; those database results are teammate-reported, not independently reproduced here. Secure provisioning and isolated-write authorization are requested through [issue #1](https://github.com/Madhav-87/sunshield-hackathon/issues/1); do not put credentials there.
+Authorized DATABASE_URL/DIRECT_URL are configured in the intended ignored root environment file. Availability and process precedence were verified without exposing values. Developer A independently verified three facilities (all DEMO), zero reports, zero VERIFIED facilities, one applied migration/up-to-date status and empty read-only database/schema diff. Default discovery returns zero real facilities; demo-inclusive discovery returns three, with all existing details and verification labels preserved. See [closure evidence](release-evidence/README.md). Credentials remain excluded from Git and all public evidence.
+
+Reviewed read-only test enhancement 7830731 was merged from the teammate's infrastructure-hardening branch without product changes. Its stronger per-DEMO discovery/detail assertions pass in the same single database case; the final root total remains 23, not an extra repeated count.
 
 Read failures are bounded/sanitized. Health/weather/assessment/HeatLab remain independent of database failures. Community writes remain disabled; no database reset, seed, migration or write occurred. No DEMO facility was relabeled.
 
-Developer C owns independent QA/approved hosting, and Developer D receives actual screenshots with cache/simulation/prototype labels. No public deployment is verified. Qualified language/occupational review and physical-phone testing remain pending.
+Developer C owns independent QA/approved hosting, and Developer D receives updated actual database-backed map/detail/empty-result screenshots with DEMO/cache/simulation/prototype labels. No public deployment is verified. Isolated-write authorization, qualified language/occupational review and physical-phone testing remain pending. No additional product code or architecture changed during closure.

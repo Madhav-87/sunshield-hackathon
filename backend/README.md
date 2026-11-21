@@ -33,6 +33,6 @@ UNKNOWN is unsupported, never clearance. No medical validation, safe-duration gu
 
 Root checks: npm run typecheck, npm test, npm run db:validate, npm run db:generate. Root read-only database testing requires RUN_DATABASE_INTEGRATION_TESTS=true and authorized credentials. Backend checks: npm run typecheck, npm test, npm run build. Frontend checks run in frontend with its own configuration; npm run test:e2e owns server startup and requires ports 8000/5173 free.
 
-Current totals: 85 backend, 22 infrastructure, 46 frontend, 39 Chromium passing; one database test skipped. No new migration, seed or database reset is required. Inspect authorized migration status before any database action.
+Current totals: 85 backend, 23 root (22 infrastructure plus one actual read-only Supabase test), 46 frontend, 39 Chromium passing. No database test is skipped in the opted-in closure run. Actual migration status is up to date and the read-only schema diff is empty. Local credentials are configured and remain ignored; hosting needs its own secure configuration. No migration, seed, reset or actual write was performed.
 
 [Release/startup/deployment handoff](../docs/FINAL_RELEASE.md), [HTTP/screenshots](../docs/release-evidence/README.md), [provider contract](../docs/INTEGRATION_HANDOFF.md), [API contract](../docs/API_CONTRACT.md), [safety methodology](../docs/HEAT_RULES.md).

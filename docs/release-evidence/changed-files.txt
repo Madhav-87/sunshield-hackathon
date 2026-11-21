@@ -1,4 +1,4 @@
-Combined changes since acceptance snapshot 5f26712. Includes reviewed Developer B and release integration changes.
+Combined integration and closure changes since acceptance snapshot 5f26712.
 
 M	backend/.env.example
 M	backend/README.md
@@ -31,13 +31,21 @@ M	docs/INTEGRATION_HANDOFF.md
 M	docs/INTEGRATION_STATUS.md
 A	docs/release-evidence/README.md
 A	docs/release-evidence/changed-files.txt
+A	docs/release-evidence/closure-database-verification.json
+A	docs/release-evidence/closure-http-smoke.json
+A	docs/release-evidence/closure-safe-zone-browser.json
 A	docs/release-evidence/heatlab-simulation.png
 A	docs/release-evidence/http-smoke.json
 A	docs/release-evidence/live-cache-check.json
 A	docs/release-evidence/live-dashboard.png
 A	docs/release-evidence/live-plan.png
 A	docs/release-evidence/live-weather.png
+A	docs/release-evidence/safe-zone-detail-demo.png
+A	docs/release-evidence/safe-zones-database-demo.png
+A	docs/release-evidence/safe-zones-database-map.png
+A	docs/release-evidence/safe-zones-real-empty.png
 A	docs/release-evidence/safe-zones-unavailable.png
+A	docs/release-evidence/verification-pre-database.json
 A	docs/release-evidence/verification.json
 M	frontend/README.md
 M	frontend/e2e/acceptance.spec.ts

@@ -8,6 +8,8 @@ Continue on integration/final-release. Executable milestones: acceptance 5f26712
 
 Developer B's exact commits 8e16ade6aa1735ebb5558aa8e931e2f56f463252 and 5b32a8964c161b15af48fdc4a690deb28b09cbfb were reviewed. Their branch shares ancestor 2c9f8a3, so normal no-fast-forward merge 4ac76a8 was used. No unrelated-history merge or repeated Developer A import occurred. Main, frontend-integration, Developer B's branch and backup/frontend-verified-20261121-2c9f8a3 are unchanged. No force-push; main requires explicit approval.
 
+Database closure also reviewed teammate commit 7830731 from feature/infrastructure-hardening: only stronger read-only database assertions, no application or schema changes. Normal merge 1f24d65 included it; the full opted-in root suite then passed all 23 tests again. Production code remains unchanged from the previously verified application.
+
 The [exact changed-file inventory](release-evidence/changed-files.txt) records the combined changes since the preserved acceptance snapshot 5f26712. It includes Developer B's provider/tests/schema/search corrections; root/backend build manifests and security patch locks; central route/composition/environment/OpenAPI integration and tests; frontend acceptance fixture expectations; and release documentation/evidence. Engine formulas, thresholds and occupational rules are unchanged.
 
 ## Application and deployment structure
@@ -48,7 +50,7 @@ Process variables/backend/.env take precedence over an optional ignored root .en
 
 Runtime: **Node v24.13.0 / npm 11.4.1**; root installation/build/generation executed on Node 24. Engine restrictions and dependency versions were not relaxed.
 
-Final startup limitation: compiled-app HTTP verification and six focused production-preview safety cases passed. A later attempt to restart via the repository-root npm start with NODE_ENV=production was rejected by automatic approval review as "blocked by policy", with no more specific reason. The immediate HTTP retry received connection refused. That production-mode root startup attempt is **not verified**, and the backend is currently stopped after the test harness cleanup; run the documented start command manually for the local demo. No alternate command was used to bypass the rejection.
+Database closure update, 21 November: the user provisioned the ignored root environment file and a manually/externally started compiled application is now running. Actual HTTP verification succeeded against working-tree commit 992b484 for health, weather/cache, assessment, planner, HeatLab, database discovery/details and documentation. The earlier automated production-mode startup remains a historical policy rejection; it was not retried or reclassified as successful. The existing manually started service was preserved, not replaced. See [closure HTTP evidence](release-evidence/closure-http-smoke.json).
 
 | Endpoint | Actual result |
 | --- | --- |
@@ -57,7 +59,7 @@ Final startup limitation: compiled-app HTTP verification and six focused product
 | POST /api/v1/heat/assess | 200 for five representative profiles |
 | POST /api/v1/protection/plan | 200 using actual hourly forecasts |
 | POST /api/v1/simulation/evaluate | 200 independent real engine |
-| Safe Zone discovery/details | Mounted; 503 without local credentials |
+| Safe Zone discovery/details | 200 actual Supabase reads; default excludes DEMO, explicit inclusion returns three DEMO records |
 | Both community POST routes | 503 disabled-write guard; no actual write |
 | Invalid coordinates/IDs | 422 with matching request IDs |
 | /openapi.json and /docs/ | 200 |
@@ -71,8 +73,7 @@ Construction, vendor, delivery, agriculture and fixed road-work profiles correct
 ## Non-overlapping regression totals
 
 - **85 backend passed**: includes 64 original, six provider, nine weather-route and six Safe Zone composition/rate-limit checks.
-- **22 infrastructure passed**: includes the old nine; do not count them again.
-- **One database integration test skipped**, not passed.
+- **23 root tests passed**: 22 infrastructure tests plus one actual authorized read-only database test; the old nine are included. No database test remains skipped in this opted-in run.
 - **46 frontend passed**.
 - **39 Chromium passed**: original 28 plus eleven acceptance checks.
 - **Six focused production-preview cases also passed** with the prepared local CSP: real HeatLab, Hindi/Marathi, reset and UNKNOWN planner prominence. These are repeat checks, not six additional unique cases.
@@ -86,7 +87,7 @@ Final dependency review found three linked high audit findings through Prisma's 
 
 Reviewed search uses spatial candidate bounds, pagination of all candidates, exact Haversine radius filtering and distance ordering before output limiting. Tests cover a nearby match after the first 500 records, dateline behavior, radius/limits and demo/rejected exclusion. Schema precision/index mappings match committed SQL in database-free generation. No migration was run.
 
-Developer B reports successful Supabase read-only access, three DEMO facilities, zero reports, one migration and empty database diff. **Developer A has not independently reproduced those database results**: authorized connection configuration is still absent here. Secure provisioning is requested in issue #1 and through a metadata-only user-input request. No connection value belongs in those channels.
+Developer A independently verified the provisioned configuration, application-client connection, current counts (**three facilities, all DEMO; zero reports; zero VERIFIED facilities**), existing details, demo exclusion/inclusion, radius/category/order/limit behavior, one applied migration with up-to-date status, and an **empty read-only database-to-schema diff**. Prisma 7.10.1 validation/generation and the opt-in read-only integration test passed on Node 24. The application and CLI load the intended ignored root environment file, process variables retain precedence, and write configuration remains false. No secret values are recorded. See [database verification](release-evidence/closure-database-verification.json) and [actual browser/API checks](release-evidence/closure-safe-zone-browser.json).
 
 Empty real discovery is valid with only DEMO data. No demo was relabeled or seeded as a verified resource. Reads are mounted; writes remain disabled by default, with ten-per-fifteen-minute/IP shared limiting when explicitly enabled. Submission/report success is fixture-tested only. Actual writes require an authorized isolated environment/data. No reset, truncation, migration or database write occurred.
 
@@ -120,7 +121,7 @@ Open http://localhost:5173/heatlab. Evaluate defaults **35 C / 50% / 5 km/h**:
 5. Edit, evaluate, reset and refresh; saved worker profile stays independent.
 6. Switch en/hi/mr and show SOS without placing an emergency call.
 
-HeatLab does not depend on weather/database. Live dashboard/planning can additionally show actual source/cache/observation timestamps while Open-Meteo is reachable. Show Safe Zone unavailability honestly until credentials are verified. [Physical-phone testing](ANDROID_TESTING.md) remains unexecuted.
+HeatLab does not depend on weather/database. Live dashboard/planning can additionally show actual source/cache/observation timestamps while Open-Meteo is reachable. Safe Zones now show a valid empty real-resource result by default; Include demonstration facilities explicitly reveals three DEMO/not-verified records and their real database-backed details. Do not claim these are verified cooling resources. [Physical-phone testing](ANDROID_TESTING.md) remains unexecuted.
 
 ## Team handoff and release recommendation
 
@@ -130,6 +131,8 @@ Developer C owns independent QA/approved hosting. Frontend Vercel root is fronte
 
 Developer D should use actual evidence screenshots and current local live-weather/plan claims. Keep CACHED/SIMULATION labels and prototype limitations. Do not claim verified real facilities, measured impact, medical validation or deployed integration.
 
-Remaining gates: authorized database read-only/migration-status verification, isolated-write authorization, Developer C QA/hosting/public verification, qualified translation/occupational review and real-device testing. Employer expansion, authentication, PWA, new visuals and optimization remain deferred.
+Remaining gates: isolated-write authorization (writes stay off), Developer C independent QA/hosting/public verification, qualified translation/occupational review and real-device testing. Database read-only configuration/connectivity/migration-status/schema-alignment gates are resolved locally. Hosting still needs its own securely provisioned configuration; the ignored local file is never deployed through Git. Employer expansion, authentication, PWA, new visuals and optimization remain deferred.
 
-**Code ready for live-weather/independent HeatLab local demo and Developer C QA, with manual backend startup currently required; not yet a verified public full-stack release.**
+Developer B owns the separate root Vitest/tinypool development-advisory review; no remediation is duplicated here. At the reviewed 7830731 handoff, only the read-only test update was delivered. No five-case isolated live-write suite is present in that commit or the current root test files, and no live-write test was executed or counted as skipped/passed. If those tests are delivered, keep them disabled without explicit isolated-write authorization. Existing mocked unit write checks do not mutate Supabase.
+
+**Local full-stack read-only demonstration ready: manual running-app startup, weather, planning, HeatLab and Supabase reads verified. Community writes remain disabled. Public deployment remains unverified. Freeze by 23:50 and preserve the midnight submission buffer.**
