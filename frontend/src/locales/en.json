@@ -241,5 +241,6 @@
   "enum.VERIFIED": "Verified",
   "enum.PENDING": "Pending verification",
   "enum.REJECTED": "Rejected",
-  "enum.DEMO": "DEMO · Not verified"
+  "enum.DEMO": "DEMO · Not verified",
+  "ui.skip": "Skip to main content"
 }
