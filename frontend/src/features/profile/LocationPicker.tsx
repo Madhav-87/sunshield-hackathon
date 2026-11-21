@@ -12,11 +12,15 @@ export function LocationPicker({
   value: Location | null;
   onChange: (value: Location) => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const id = useId();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const generation = useRef(0);
+  const latestOnChange = useRef(onChange);
+  useEffect(() => {
+    latestOnChange.current = onChange;
+  }, [onChange]);
   useEffect(
     () => () => {
       generation.current++;
@@ -37,10 +41,10 @@ export function LocationPicker({
         const candidate = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
-          city: t('location.current'),
+          city: i18n.t('location.current'),
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         };
-        if (locationSchema.safeParse(candidate).success) onChange(candidate);
+        if (locationSchema.safeParse(candidate).success) latestOnChange.current(candidate);
         else setError('location.unavailable');
         setPending(false);
       },

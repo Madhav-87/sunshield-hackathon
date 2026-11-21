@@ -24,7 +24,12 @@ export default function ForecastChart({ weather }: { weather: WeatherResponse })
           <XAxis dataKey="time" tickFormatter={hourLabel} />
           <YAxis width={35} />
           <Tooltip formatter={(value) => [`${value}°C`, t('field.temperature')]} />
-          <Bar dataKey="temperatureC" fill="var(--amber)" radius={[5, 5, 0, 0]} />
+          <Bar
+            dataKey="temperatureC"
+            fill="var(--amber)"
+            radius={[5, 5, 0, 0]}
+            isAnimationActive={false}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

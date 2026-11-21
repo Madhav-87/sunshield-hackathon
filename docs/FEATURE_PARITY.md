@@ -33,3 +33,24 @@ Design direction: restrained field intelligence, with a navy guidance card and a
 | Desktop navigation, mobile bottom navigation, footer | Declarative layout components | 48px primary controls, focus, responsive widths |
 
 Intentional replacements: the obsolete fake water/shade selection toasts become actual filtered navigation; free-text city labels become supported coordinate selections; mock-only heat assessments become unavailable notices unless the real engine is used; employer contract placeholders remain explicit. Imperative rendering, generic safety-code fallbacks and untrusted HTML are removed only after their replacements are verified. Final per-feature verification is recorded in FRONTEND_TEST_REPORT.md.
+
+## Final migration and verification status
+
+Every production workflow in the inventory above now uses native React; the obsolete renderer, delegated handlers, old styles/hook/service/type wrappers were removed. Original behavior is preserved in commit 8429fcb. No required screen or control was silently discarded.
+
+| Feature group | Implementation status | Verification | Backend dependency / known limit |
+| --- | --- | --- | --- |
+| All routes, desktop/mobile navigation, deep links and 404 | Migrated | Chromium at all ten widths; back/refresh/mobile/landscape checks | Static host rewrites prepared; deployed host unverified |
+| Onboarding, all worker fields, steps/back/review/save/profile editing | Migrated | Runtime schemas, browser workflow/persistence, blocked-storage component test | Same-day schedules only |
+| GPS, manual city selection and location query refresh | Migrated | Browser GPS/denial and exact coordinate assertions | Three explicit city centers; GPS uses displayed device timezone |
+| Weather/source/timestamps/chart | Migrated UI | Nullable/schema/component tests; populated responsive fixtures | Real GET /weather unavailable; no fake live fallback |
+| Advisory, every recommendation/factor/limitation, priorities and voice | Migrated | Actual engine CRITICAL/HIGH in Chromium; translation/security tests; unavailable-voice test | Qualified translation/voice-device review pending |
+| Protection schedule/periods/explanation and gaps | Migrated UI | Contract validation and responsive partial-period fixture | Actual provider absent; full live forecast unverified |
+| Safe Zone map/list/search/category/radius/verification/details/directions | Migrated UI | Canonical-schema/URL tests, browser filter/zoom, responsive populated map/list | Real routes unmounted; availability filter explicitly unsupported by discovery shape |
+| Community suggestions/reports | Migrated forms | Strict payload/security tests; browser submission reports actual 404 honestly | Database integration and verification process remain server-owned |
+| HeatLab controls/presets/two scenarios/reset/live navigation | Migrated | Real backend dev and production-preview comparison; validation/isolation/cancellation tests | Engine remains prototype, no medical clearance |
+| SOS/112/warnings/cooling/fluid restriction | Migrated | Browser without profile/backend; language/keyboard checks; automated axe | No claim that a call has been placed automatically |
+| Employer dashboard/planner | Migrated draft screens | Responsive routes and native draft controls reviewed | Enterprise contracts/API absent; no invented outputs |
+| en/hi/mr and feedback/empty/error/retry states | Migrated | 245 matching translation keys; malicious/error/timeout/missing-data tests | Human language review and complete cross-browser audit pending |
+
+Native source mapping plus representative tests cover the inventory; not every possible input combination is claimed to have been exercised. External-service placeholders are explicitly identified and remain the only incomplete live workflows.

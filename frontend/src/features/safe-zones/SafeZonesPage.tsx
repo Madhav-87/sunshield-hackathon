@@ -41,6 +41,7 @@ function SafeZones({ profile }: { profile: WorkerProfile }) {
     .filter(
       (facility) =>
         (!verification || facility.verificationStatus === verification) &&
+        (verification !== 'VERIFIED' || Boolean(facility.lastVerifiedAt)) &&
         (!category || facility.category === category) &&
         facility.distanceKm <= radius &&
         facility.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()),

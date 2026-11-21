@@ -1,70 +1,44 @@
-# Integration and finalization status
+# Current SunShield integration status
 
-Verified 21 November 2026. No production source, existing contract, security middleware, heat rule or original regression test was changed.
+Updated for the frontend reengineering phase, 21 November 2026. The native frontend and unchanged core backend are now together on feature/frontend-reengineering, based on frontend-integration 8429fcb. Developer B's original root database/Safe Zone files and commits are preserved. No unrelated-history merge, shared-branch rewrite or deployment was performed.
 
-## 1. Git synchronization
+## Verified working slice
 
-The existing working tree was clean at the start. Local develop is f7f02ce; feature/core-intelligence began at 2c929b7. develop is an ancestor of the feature branch. All five earlier commits remain in history. No Git remote or remote-tracking branch is configured. The GitHub URL has been requested; no fetch, merge or push is possible until it is supplied. No force-push, reset or remote history replacement was attempted. See [GIT_SYNC.md](GIT_SYNC.md) for the prepared workflow, including unrelated-history and teammate-change handling. This phase's additions are saved in a separate local integration-handoff commit.
+- GET /api/v1/health works without database/weather.
+- POST /api/v1/simulation/evaluate is connected to the native HeatLab UI with runtime-validated requests/responses.
+- The real engine returns CRITICAL plus explicit stop-work action for heavy construction and HIGH plus reduced strenuous activity for the vendor at identical 35 C / 50% / 5 km/h. Both have heat index 40.68 C and retain SIMULATION/limitations.
+- The real comparison passed in Chromium against both development and production-preview frontend builds, with the backend on 8000 and frontend on 5173.
+- All eleven routes, profile setup/editing/persistence, GPS/manual supported cities, independent dashboard sections, plan UI, map/list/filters, community forms, multilingual safety, SOS and employer draft screens use native React.
+- All 46 frontend tests, all original 64 backend tests, 28 Chromium acceptance cases, type checks, lint and production builds passed. See [test report](FRONTEND_TEST_REPORT.md) for actual scope and any build warnings.
 
-## 2. Handoff
+## API readiness
 
-[INTEGRATION_HANDOFF.md](INTEGRATION_HANDOFF.md) documents the exact existing provider interface, executable weather schema, required/nullable fields, timestamps, freshness, live/cache behavior, error codes, injection steps and complete frontend code inventory. It links directly to valid request JSON and engine-generated responses. Documenting the existing behavior does not imply Developer B/frontend contract approval; that coordination is still pending.
-
-## 3. Available APIs
-
-| Endpoint | Current state |
+| Endpoint | Current integrated state |
 | --- | --- |
-| GET /api/v1/health | 200, independent of database/weather |
-| POST /api/v1/simulation/evaluate | 200 for valid scenarios, independent of database/weather |
-| POST /api/v1/heat/assess | Intentional 503 WEATHER_PROVIDER_UNAVAILABLE at default composition |
-| POST /api/v1/protection/plan | Same intentional 503 until real provider injection |
-| /docs/ and /openapi.json | Swagger UI and schema available |
+| GET /api/v1/health | Working |
+| POST /api/v1/simulation/evaluate | Working; actual engine integration verified |
+| GET /api/v1/weather | Not mounted; frontend shows unavailable state |
+| POST /api/v1/heat/assess | Intentional 503 without real WeatherProvider |
+| POST /api/v1/protection/plan | Intentional 503 without real WeatherProvider |
+| GET /api/v1/safe-zones and /:id | Developer B services/router exist at root, not mounted in integrated Express app |
+| POST /api/v1/safe-zones and /:id/reports | Contract-ready frontend forms; actual integrated request currently returns 404 honestly |
+| GET /api/v1/enterprise/dashboard | Not implemented / contract pending |
+| POST /api/v1/enterprise/plan | P1, not implemented / contract pending |
+| /docs/ and /openapi.json | Available for existing core endpoints |
 
-## 4. Actual HeatLab results
+## Preserved boundaries
 
-The [demo pack](HEATLAB_DEMO.md) captures complete HTTP requests/responses using the unchanged compiled app. Shared simulated inputs: 35 C, 50% humidity, 5 km/h wind. Both have a 40.68 C heat index and HIGH environmental advisory.
+Developer A's backend production source and original tests are unchanged. Developer B's root source, Prisma, SQL, package/configuration and infrastructure are unchanged. The frontend does not implement a competing weather provider, heat algorithm, database or fabricated employer outcomes. Fixture-based weather/map/forecast checks are not described as live/database validation.
 
-- Heavy construction/direct sun/limited water/no shade/employer-controlled schedule: SIMULATION, CRITICAL; STOP_UNSAFE_ACTIVITY first, followed by practical water, shade, workload and supervisor interventions.
-- Light street vendor/partial shade/available water and shade/flexible schedule: SIMULATION, HIGH; REDUCE_STRENUOUS_ACTIVITY and ESCALATE_TO_SUPERVISOR remain required recommendations.
+The original unsafe frontend is retained through its existing Git history/branch for backup. Its production HTML renderer, delegated handlers and global state are removed from the rewrite. Exact original-to-replacement mapping is in [FEATURE_PARITY.md](FEATURE_PARITY.md).
 
-Neither is medical validation or permission to work. Response timestamps are actual generation times; files are not fabricated live weather. Hydration limitations remain present.
+## Next integration steps and blockers
 
-## 5. WeatherProvider readiness
+1. Developer B must supply the actual WeatherProvider and bounded upstream timeout/cache behavior. Inject at the existing backend composition point without changing the engine or making health/HeatLab depend on database startup.
+2. Deliberately resolve root-versus-backend module placement and mount Safe Zone routes with shared middleware. Coordinate the search-limit and migration-alignment findings from [Developer B review](DEVELOPER_B_REVIEW.md); do not overwrite teammate implementations.
+3. Verify actual weather retrieval, live assessment, hourly planning, cache age, external failures and real Supabase discovery/writes after that integration. These have not yet been executed.
+4. Agree enterprise contracts before adding real employer requests. Draft UI remains explicit and uncalculated.
+5. Set the real public HTTPS API URL, exact production CORS origin and hosting/CSP. The Vercel example is preparation only; no deployment has replaced the working demo.
+6. Complete qualified Hindi/Marathi review and broader Firefox/Safari, real-device/assistive-technology checks. No formal security or WCAG compliance guarantee is made.
 
-Only Developer A's existing adapter/interface and inline verification fixtures are present. No Developer B implementation was found in the local source tree. No competing production provider was created; server composition is unchanged. Real Open-Meteo retrieval, actual cache policy and external failure behavior cannot yet be verified. The handoff states exactly where to inject Developer B's confirmed instance and notes that the provider must implement bounded upstream timeouts.
-
-Independent checks exercised LIVE and CACHED contract fixtures, partial-hour planning, stale-cache UNKNOWN, sanitized thrown-provider errors for both live routes, and HeatLab success while the provider fails. These are explicitly fixture checks, not verification of real weather integration.
-
-## 6. Frontend readiness
-
-Frontend developers can integrate health and HeatLab immediately using the [complete request/response pairs](HEATLAB_DEMO.md). Default API base is http://localhost:8000/api/v1 and CORS frontend origin http://localhost:5173. Recommendation, limitation, factor and disclaimer codes are listed in the handoff. Always display SIMULATION/CACHED/UNKNOWN correctly and retain safety text. Full live-worker integration remains dependent on Developer B.
-
-## 7. Executed verification
-
-| Command/check | Actual result |
-| --- | --- |
-| npm run typecheck | Passed, exit 0 |
-| npm run build | Passed, exit 0 |
-| npm test | All original 64 tests passed across 4 files, exit 0 |
-| node scripts/verify-integration.mjs | 11 HTTP checks passed, exit 0 |
-
-The [execution record](../backend/examples/integration/verification.json) identifies loopback HTTP execution and labels fixture checks as not real weather. Temporary servers are closed by the runner. No original test was removed or weakened; no additional production behavior needed correction.
-
-## 8. Files changed in this phase
-
-- Added [verification runner](../backend/scripts/verify-integration.mjs).
-- Added six generated JSON files under [integration examples](../backend/examples/integration/): heavy/lower request and response pairs, health response and verification record.
-- Added [provider/frontend handoff](INTEGRATION_HANDOFF.md), [demo walkthrough](HEATLAB_DEMO.md), [safe synchronization workflow](GIT_SYNC.md), and this status report.
-- Added navigation links to [backend README](../backend/README.md) and the historical [implementation report](IMPLEMENTATION.md).
-- No files under production src or the original tests were changed. No Developer B-owned implementation files were modified.
-
-## 9. Remaining blockers
-
-1. GitHub repository URL and visibility into teammate remote history.
-2. Developer B's real WeatherProvider implementation and its confirmed export path.
-3. Team confirmation of the existing contracts before merging frontend/provider integration.
-4. Enterprise request/response agreement. /api/v1/enterprise/plan remains P1 and unimplemented.
-
-## 10. Immediate next steps
-
-Supply the GitHub URL, then inspect remote refs/history before deciding the safe integration branch. Obtain Developer B's provider, verify compatibility without changing shared contracts independently, inject at existing composition, and exercise real live/forecast/cache/failure cases. Meanwhile connect the frontend health and HeatLab screens using the saved examples. Re-run the regression suite after integrating teammate code. Keep employer planning deferred until its contract is agreed.
+Full details: [rewrite report](FRONTEND_REENGINEERING_REPORT.md), [security audit](FRONTEND_SECURITY_AUDIT.md), [test report](FRONTEND_TEST_REPORT.md), [provider contract](INTEGRATION_HANDOFF.md).

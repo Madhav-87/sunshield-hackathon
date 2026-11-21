@@ -284,13 +284,25 @@ test('read-only keyboard and automated accessibility checks on landing, HeatLab 
 });
 
 for (const width of [320, 360, 375, 390, 430, 768, 1024, 1280, 1440, 1920]) {
-  test(`responsive routes at ${width}px: no horizontal overflow`, async ({ page }) => {
+  test(`responsive routes at ${width}px: no horizontal overflow`, async ({ page }, info) => {
     await page.setViewportSize({ width, height: 900 });
     await page.addInitScript(
       (profile) => localStorage.setItem('sunshield.workerProfile', JSON.stringify(profile)),
       constructionScenario,
     );
-    await page.route('**/api/v1/weather?**', (route) => route.fulfill({ json: demoWeather }));
+    await page.route('**/api/v1/weather?**', (route) =>
+      route.fulfill({
+        json: {
+          ...demoWeather,
+          hourly: [35, 36, 34].map((temperatureC, index) => ({
+            time: `2026-11-21T${String(9 + index).padStart(2, '0')}:00:00+05:30`,
+            temperatureC,
+            humidityPercent: 50,
+            windSpeedKmh: 5,
+          })),
+        },
+      }),
+    );
     await page.route('**/api/v1/heat/assess', (route) => route.fulfill({ json: heavy }));
     await page.route('**/api/v1/safe-zones?**', (route) =>
       route.fulfill({
@@ -310,14 +322,40 @@ for (const width of [320, 360, 375, 390, 430, 768, 1024, 1280, 1440, 1920]) {
           workEnd: '18:00',
           timeline: [
             {
-              start: '2026-11-21T09:15:00+05:30',
-              end: '2026-11-21T10:00:00+05:30',
+              start: '2026-11-21T09:00:00+05:30',
+              end: '2026-11-21T09:15:00+05:30',
               advisoryLevel: 'CRITICAL',
               temperatureC: 35,
               factors: heavy.assessment.factors,
               recommendationCodes: heavy.assessment.recommendations.map((item) => item.code),
               availability: 'AVAILABLE',
               assessment: heavy.assessment,
+            },
+            {
+              start: '2026-11-21T09:15:00+05:30',
+              end: '2026-11-21T18:00:00+05:30',
+              advisoryLevel: 'UNKNOWN',
+              temperatureC: null,
+              factors: [],
+              recommendationCodes: ['STOP_UNSAFE_ACTIVITY'],
+              availability: 'UNAVAILABLE',
+              assessment: {
+                ...heavy.assessment,
+                advisoryLevel: 'UNKNOWN',
+                factors: [],
+                recommendations: [{ code: 'STOP_UNSAFE_ACTIVITY', priority: 'HIGH' }],
+                observedAt: null,
+                limitations: ['FORECAST_PERIOD_UNAVAILABLE'],
+                environmentalIndicators: {
+                  temperatureC: null,
+                  humidityPercent: null,
+                  apparentTemperatureC: null,
+                  windSpeedKmh: null,
+                  heatIndexC: null,
+                  heatIndexMethod: 'NOT_APPLICABLE',
+                  environmentalAdvisoryLevel: 'UNKNOWN',
+                },
+              },
             },
           ],
           disclaimerCode: 'NOT_A_CERTIFIED_WORK_REST_PLAN',
@@ -341,6 +379,33 @@ for (const width of [320, 360, 375, 390, 430, 768, 1024, 1280, 1440, 1920]) {
     ]) {
       await page.goto(path);
       await expect(page.locator('main h1')).toBeVisible();
+      if (path === '/worker/dashboard') {
+        await expect(page.locator('.chart .recharts-surface').first()).toBeVisible();
+        await expect(
+          page.getByText('Stop unsafe work and move away from the exposure.', { exact: true }),
+        ).toBeVisible();
+        if (width === 390 || width === 1440)
+          await page.screenshot({
+            path: info.outputPath(`dashboard-${width}.png`),
+            fullPage: true,
+          });
+      }
+      if (path === '/worker/plan') {
+        await expect(
+          page.getByText('Forecast unavailable for this period', { exact: true }),
+        ).toBeVisible();
+        await expect(
+          page
+            .getByText('Stop unsafe work and move away from the exposure.', { exact: true })
+            .first(),
+        ).toBeVisible();
+      }
+      if (path === '/safe-zones') {
+        await expect(
+          page.getByRole('heading', { name: 'Demonstration water resource', exact: true }),
+        ).toBeVisible();
+        await expect(page.locator('.leaflet-container')).toBeVisible();
+      }
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
         true,
       );

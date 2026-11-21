@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+// Deterministic validation without runtime code generation under a strict script CSP.
+z.config({ jitless: true });
+
 export const occupations = [
   'CONSTRUCTION',
   'DELIVERY',

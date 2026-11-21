@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { Facility, Location } from '../../schemas/contracts';
 import { Card, Button } from '../../components/common/Primitives';
-import { directionsUrl } from '../../utils/safety';
+import { directionsUrl, displayTime } from '../../utils/safety';
 export function FacilityCard({
   facility,
   origin,
@@ -11,7 +11,7 @@ export function FacilityCard({
   origin: Location;
   onDetails?: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const url = directionsUrl(origin, facility);
   return (
     <Card className="facility">
@@ -24,9 +24,19 @@ export function FacilityCard({
         {t('zones.distance')}: {facility.distanceKm.toFixed(2)} km
       </p>
       <ul className="chips">
-        {facility.waterAvailable && <li>{t('enum.DRINKING_WATER')}</li>}
-        {facility.shadeAvailable && <li>{t('enum.SHADED_REST_AREA')}</li>}
+        <li>
+          {t('field.waterAccess')}:{' '}
+          {t(facility.waterAvailable ? 'enum.AVAILABLE' : 'enum.UNAVAILABLE')}
+        </li>
+        <li>
+          {t('field.shadeAccess')}:{' '}
+          {t(facility.shadeAvailable ? 'enum.AVAILABLE' : 'enum.UNAVAILABLE')}
+        </li>
       </ul>
+      <p className="small">
+        {t('zones.lastVerified')}:{' '}
+        {displayTime(facility.lastVerifiedAt, origin.timezone, i18n.language)}
+      </p>
       <div className="row wrap">
         {url && (
           <a className="button" href={url} target="_blank" rel="noopener noreferrer">

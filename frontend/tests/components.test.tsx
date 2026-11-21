@@ -1,8 +1,12 @@
-import { describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../src/i18n';
-import { AssessmentPanel, Recommendations } from '../src/components/safety/AssessmentPanel';
+import {
+  AssessmentPanel,
+  Recommendations,
+  SpeechButton,
+} from '../src/components/safety/AssessmentPanel';
 import { WeatherPanel } from '../src/components/weather/WeatherPanel';
 import { FacilityCard } from '../src/features/safe-zones/FacilityCard';
 import { ErrorPanel } from '../src/components/common/Primitives';
@@ -14,6 +18,8 @@ import heavy from '../../backend/examples/integration/heatlab-heavy.response.jso
 import { LocationPicker } from '../src/features/profile/LocationPicker';
 import SubmissionPage from '../src/features/safe-zones/SubmissionPage';
 import { Providers } from '../src/app/providers';
+import { MemoryRouter } from 'react-router-dom';
+import OnboardingPage from '../src/features/onboarding/OnboardingPage';
 
 function localized(ui: React.ReactNode) {
   return render(<I18nextProvider i18n={i18n}>{ui}</I18nextProvider>);
@@ -115,5 +121,67 @@ describe('actual rendering paths keep malicious data inert', () => {
     await user.type(screen.getByLabelText('Address', { exact: true }), malicious);
     expect(screen.getByLabelText('Address', { exact: true })).toHaveValue(malicious);
     expect(view.container.querySelector('img')).toBeNull();
+  });
+});
+
+describe('browser capability recovery', () => {
+  it('delivers a delayed GPS result to the latest profile callback', () => {
+    let complete: PositionCallback = () => undefined;
+    vi.stubGlobal('navigator', {
+      geolocation: {
+        getCurrentPosition: (success: PositionCallback) => {
+          complete = success;
+        },
+      },
+    });
+    const oldCallback = vi.fn();
+    const latestCallback = vi.fn();
+    const view = render(<LocationPicker value={null} onChange={oldCallback} />);
+    fireEvent.click(screen.getByRole('button', { name: /^Use my location$/ }));
+    view.rerender(<LocationPicker value={null} onChange={latestCallback} />);
+    act(() =>
+      complete({
+        coords: {
+          latitude: 19.1,
+          longitude: 72.9,
+          accuracy: 1,
+          altitude: null,
+          altitudeAccuracy: null,
+          heading: null,
+          speed: null,
+        },
+        timestamp: Date.now(),
+      } as GeolocationPosition),
+    );
+    expect(oldCallback).not.toHaveBeenCalled();
+    expect(latestCallback).toHaveBeenCalledWith(
+      expect.objectContaining({ latitude: 19.1, longitude: 72.9 }),
+    );
+  });
+  it('retains text guidance and reports unavailable speech support', () => {
+    localized(<SpeechButton assessment={assessmentResponseSchema.parse(heavy).assessment} />);
+    fireEvent.click(screen.getByRole('button', { name: /^Listen to guidance$/ }));
+    expect(
+      screen.getByText('A suitable voice is unavailable. Read the text guidance.'),
+    ).toBeInTheDocument();
+  });
+  it('completes profile setup in memory when saving browser storage is blocked', async () => {
+    const { default: userEvent } = await import('@testing-library/user-event');
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    render(
+      <Providers>
+        <MemoryRouter>
+          <OnboardingPage />
+        </MemoryRouter>
+      </Providers>,
+    );
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('button', { name: /^Continue$/ }));
+    await user.click(screen.getByRole('button', { name: /^Continue$/ }));
+    await user.selectOptions(screen.getByLabelText('Supported city center'), 'Mumbai');
+    await user.click(screen.getByRole('button', { name: /^Save profile$/ }));
+    expect(screen.getByText(/Preferences could not be saved on this device/)).toBeInTheDocument();
   });
 });

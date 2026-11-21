@@ -1,59 +1,71 @@
 # SunShield frontend
 
-SunShield is a React, TypeScript, and Vite frontend for worker heat-safety guidance. The app is
-frontend-only; backend services are owned by the team.
+Native React, strict TypeScript and Vite frontend. TanStack Query owns server state; validated React context owns worker preferences. All heat advisories come from the existing backend engine. Production rendering contains no legacy HTML generator or mutable global profile state.
 
-## Run locally
+## Start locally
 
-```sh
-npm install
+Use Node.js 24. In one terminal:
+
+```powershell
+cd backend
+npm ci
 npm run dev
 ```
 
-The default setup uses contract-shaped demonstration services. They are clearly labeled and do
-not claim to be live weather, verified facilities, or a real heat assessment.
+In another terminal from the repository root:
 
-To connect an available backend, copy `.env.example` to `.env.local` and set:
-
-```env
-VITE_API_BASE_URL=http://localhost:8000/api/v1
-VITE_USE_MOCKS=false
+```powershell
+cd frontend
+npm ci
+Copy-Item .env.example .env.local
+npm run dev -- --host localhost
 ```
 
-`VITE_API_BASE_URL` is configurable for local, test, and production environments. Do not add
-database credentials or Supabase service-role keys to frontend environment files.
+Open http://localhost:5173. Default API URL is http://localhost:8000/api/v1 and mocks default to false. The backend currently supports health and HeatLab independently; live weather/assessment/planning and Safe Zones show accurate unavailable states until Developer B's integration is composed. Do not put database credentials or service-role keys in frontend environment files.
 
-## Frontend structure
+HeatLab makes independent real POST /simulation/evaluate requests for each scenario. Its initial 35 C / 50% / 5 km/h comparison should display the actual prototype CRITICAL construction and HIGH vendor advisories with equal environmental indicators. These outputs are not calculated or hardcoded in React. Simulation does not modify the saved worker profile.
 
-- `src/pages/` contains the emergency and employer demonstration pages.
-- `src/components/` contains Tailwind UI primitives, the OpenStreetMap view, and the Recharts
-  weather chart.
-- `src/services/` contains the shared API client and endpoint services.
-- `src/types/` contains frontend types for the agreed TRD request and response contracts.
-- `src/mocks/` contains explicitly simulated weather, assessments, plans, and demo-only locations.
-- `src/locales/` contains English, Hindi, and Marathi emergency guidance.
+## Routes and architecture
 
-Worker preferences are stored in browser local storage. HeatLab uses separate simulation inputs
-and does not change the saved worker profile or live weather data.
+Landing, onboarding, worker dashboard/plan/profile, Safe Zones/discovery/submission, SOS, HeatLab and both employer routes are preserved, with nested layouts and a custom 404. Emergency assistance is independent of profile/backend availability. Employer screens are explicitly uncalculated drafts pending an agreed API.
 
-HeatLab checks `GET /health` when opened in API mode. Simulation stays on its labeled demo response
-unless mock mode is disabled. In API mode, the client will not send `POST /simulation/evaluate`
-until the finalized `API_CONTRACT.md` is available to confirm its request and response shape.
+- [app](src/app/): router/providers/error boundaries.
+- [features](src/features/): native workflow components.
+- [schemas](src/schemas/contracts.ts): executable API and profile boundary validation.
+- [services](src/services/): sanitized HTTP transport and query/mutation factories.
+- [context](src/context/ProfileContext.tsx): validated local preferences and language.
+- [components](src/components/): forms, safety, feedback, charts and maps.
+- [locales](src/locales/): English, Hindi and Marathi, with complete critical-code inventories.
+
+Select Pune, Mumbai or New Delhi city centers explicitly, or use one-shot GPS. A typed label never substitutes another city's coordinates. GPS timezone is the displayed device timezone. Storage failures are tolerated. Map distances are approximate straight-line distances; status and availability are not inferred.
+
+Mock mode requires VITE_USE_MOCKS=true and is visibly labelled. It supplies only demonstration weather/facilities; it does not calculate heat advisories or silently replace API failures.
 
 ## Checks
 
-```sh
+```powershell
 npm run typecheck
 npm run lint
 npm run format:check
+npm test
 npm run build
+npx playwright install chromium
+npm run test:e2e
 ```
 
-There is no frontend test script configured yet.
+The browser suite starts/stops the unchanged backend on 8000 and frontend on 5173; both ports must be free. Most UI-only weather/map cases use clearly identified fixtures because real routes are unavailable. Mandatory HeatLab cases call the actual engine. To test built assets rather than Vite development, use a fresh PowerShell terminal:
 
-## Backend contracts still pending
+```powershell
+$env:FRONTEND_E2E_PREVIEW='true'
+npm run test:e2e -- --grep 'actual backend HeatLab'
+```
 
-The finalized `API_CONTRACT.md` is not currently present in this workspace, and the backend at
-`localhost:8000` was unreachable during this update. Simulation therefore has not been sent against
-the backend. Safe-zone submissions and reports and enterprise planning also remain placeholders
-until their request schemas are available. The frontend does not send invented payloads.
+Tests/reports/screenshots are in ignored output directories. Current actual results, scope and limitations: [test report](../docs/FRONTEND_TEST_REPORT.md). No Firefox/Safari, clinical safety or formal WCAG certification is claimed. Qualified Hindi/Marathi review remains needed.
+
+## Deployment preparation
+
+No deployment has been performed. The original frontend branch remains the backup demonstration. Configure a public HTTPS backend URL from [.env.production.example](.env.production.example), VITE_USE_MOCKS=false, and the backend's exact public CORS origin before release. Without an explicit production URL, API calls use same-origin /api/v1 rather than localhost. That requires an actual same-origin backend/proxy; the SPA does not implement server APIs.
+
+[Vercel configuration](vercel.json) uses frontend as the project root, provides SPA rewrites and prepared security headers, and excludes API paths from the SPA rewrite. Validate it on the chosen hosting platform and tighten CSP connect-src to the real backend hostname. This configuration has not been deployed or hosting-verified. Never publish the placeholder example URL.
+
+See [rewrite report](../docs/FRONTEND_REENGINEERING_REPORT.md), [feature parity](../docs/FEATURE_PARITY.md), [security audit](../docs/FRONTEND_SECURITY_AUDIT.md) and [integration status](../docs/INTEGRATION_STATUS.md).

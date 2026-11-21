@@ -36,6 +36,12 @@ export function FacilityDetails({ id, close }: { id: string; close: () => void }
           <h3>{query.data.name}</h3>
           <p>{query.data.address ?? '—'}</p>
           <p>
+            {t('field.seating')}:{' '}
+            {query.data.seatingAvailable === undefined
+              ? '—'
+              : t(query.data.seatingAvailable ? 'enum.AVAILABLE' : 'enum.UNAVAILABLE')}
+          </p>
+          <p>
             {t('field.openingHours')}: {query.data.openingHours ?? '—'}
           </p>
           <p>

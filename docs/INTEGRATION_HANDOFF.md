@@ -1,6 +1,6 @@
 # SunShield integration handoff
 
-Status: existing application behavior and contracts preserved. Developer B's implementation is not present locally. Default live endpoints intentionally return 503. Health and HeatLab work without weather or a database. No teammate messages have been sent.
+Status: existing backend behavior and contracts are preserved. The native frontend is now integrated with health and HeatLab. Developer B's root database/Safe Zone implementation is present unchanged but is not mounted in the core app; its real WeatherProvider is still unavailable. Default live endpoints intentionally return 503. Health and HeatLab work without weather or a database. See [current integration status](INTEGRATION_STATUS.md). No teammate messages have been sent.
 
 ## Provider contract
 
@@ -143,4 +143,4 @@ Disclaimers: ESTIMATED_ADVISORY_ONLY and NOT_A_CERTIFIED_WORK_REST_PLAN. Optiona
 
 Developer B and frontend still need to confirm the documented contracts; no contract was changed in this phase. Once the provider is available, verify real observations, hourly timezone mapping, cache reuse/staleness and upstream failure behavior with its actual implementation. The verification runner currently checks LIVE/CACHED transport behavior with clearly labelled inline fixtures, not real external weather. It also proves HeatLab succeeds when the fixture provider fails.
 
-P1 /enterprise/plan remains deferred until an enterprise contract is jointly agreed. Repository synchronization awaits the GitHub URL; see [safe synchronization steps](GIT_SYNC.md).
+P1 /enterprise/plan remains deferred until an enterprise contract is jointly agreed. The remote is configured; feature/frontend-reengineering preserves the frontend/main ancestry and imports unchanged core files deliberately. See [current integration status](INTEGRATION_STATUS.md); [GIT_SYNC.md](GIT_SYNC.md) records the earlier synchronization procedure.

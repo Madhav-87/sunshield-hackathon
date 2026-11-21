@@ -88,7 +88,7 @@
   "page.enterprise": "Workplace protection",
   "page.enterpriseBody": "Employer-supported water, shade, recovery and appropriate duties. No personal worker tracking.",
   "page.draft": "Review worksite draft",
-  "page.draftNotice": "Draft only. The employer planning contract is pending; no protection plan or outcome has been calculated.",
+  "page.draftNotice": "Draft only. Employer planning is not available yet; no protection plan or outcome has been calculated.",
   "page.backToLive": "View worker dashboard",
   "weather.current": "Current conditions",
   "weather.feelsLike": "Feels like",
@@ -242,5 +242,6 @@
   "enum.PENDING": "Pending verification",
   "enum.REJECTED": "Rejected",
   "enum.DEMO": "DEMO · Not verified",
-  "ui.skip": "Skip to main content"
+  "ui.skip": "Skip to main content",
+  "zones.lastVerified": "Last verified"
 }
