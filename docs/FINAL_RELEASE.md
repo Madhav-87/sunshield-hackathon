@@ -2,6 +2,8 @@
 
 Release Phase 2: deadline extended to **00:00 IST, 22 November 2026**. The previous 22:00 deadline is superseded. Targets: essential integration by 23:00 on 21 November, QA/deployment by 23:40, development freeze at 23:50, and a ten-minute submission buffer. This release preserves the verified frontend and engine. It does not declare unavailable external integrations complete.
 
+Independent acceptance update: two reproduced frontend presentation defects were corrected without changing the engine: reset clears old validation warnings, and UNKNOWN planner STOP_UNSAFE_ACTIVITY remains visible before expanding details. The expanded **39-case Chromium suite**, all **46 frontend tests** and all **64 backend tests** pass. See [acceptance findings and exact changed files](FINAL_ACCEPTANCE.md) and [Android testing preparation/status](ANDROID_TESTING.md). No physical-device, external-service or deployment result is inferred from these checks.
+
 ## Phase 2 coordination and current gate
 
 Fresh remote inspection on 21 November at 21:45 IST found no new Developer B or C branch or commit. The advertised branches were main, frontend-integration, feature/core-intelligence, feature/frontend-reengineering and integration/final-release. The working branch remains integration/final-release; the backup tag is preserved.

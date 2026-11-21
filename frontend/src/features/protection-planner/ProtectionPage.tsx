@@ -52,7 +52,7 @@ function Protection({ profile }: { profile: WorkerProfile }) {
                 )}
                 <Recommendations
                   recommendations={period.assessment.recommendations.filter(
-                    (item) => item.priority === 'CRITICAL',
+                    (item) => item.priority === 'CRITICAL' || item.code === 'STOP_UNSAFE_ACTIVITY',
                   )}
                 />
                 <details>

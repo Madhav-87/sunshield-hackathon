@@ -100,6 +100,7 @@ function ScenarioCard({
   useEffect(() => {
     active.current?.abort();
     setWorker(initial);
+    setValidation(false);
     setResult(null);
     setError(null);
     setPending(false);
