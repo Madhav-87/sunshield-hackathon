@@ -1,79 +1,74 @@
 # SunShield Independent Release QA Report
 
 **Review date:** 21 November 2026 (IST)
-**Verified integration commit:** `8493165a0507d354fe422e918b5ce3290b14e181`
-**QA branch:** `qa/final-release-8493165`
-**Runtime:** Node.js `v24.22.3`, npm `11.19.1`
-**Comparison baseline:** `db93a5f799b702e1c0adeb9fda8011815ccd19de`
+**Verified integration commit:** 992b4845a43848148e2bccdcdc5834efb0607704
+**Executable dependency patch:** 832a277000b35381c659d65dc2c4cf20befbfdb9 (ancestor of tested commit)
+**QA branch:** qa/final-release-992b
+**Runtime:** Node.js v24.22.3, npm 11.19.1
 
-The consolidated integration branch contains Developer B's supplied `5b32a8964c161b15af48fdc4a690deb28b09cbfb` as an ancestor, plus Developer A's weather composition and Safe Zone route mounting. This QA branch is based on the consolidated integration commit and contains QA documentation and a read-only HTTP smoke script. It does not merge or alter Developer B's branch. The earlier report for `db93a5f` is preserved in [historical QA evidence](RELEASE_QA_REPORT_HISTORICAL.md).
+The clean isolated worktree at the exact integration tip passed the checks below. The prior QA branch for commit 8493165 and the historical baseline report for db93a5f are preserved in branch history and RELEASE_QA_REPORT_HISTORICAL.md. The current QA branch adds only documentation and the independent read-only smoke script; it does not modify product code or merge Developer B's branch independently.
 
-## Verification on the consolidated commit
+## Exact-commit test results
 
 | Check | Result |
 |---|---|
-| Backend `npm ci` under Node 24 | Passed; 293 packages installed; npm reported 3 high advisories |
-| Backend typecheck | Passed, including Prisma client generation |
-| Backend tests | Passed: 85 tests across 7 files |
-| Backend production build | Passed |
-| Frontend `npm ci` | Passed; 389 packages added; 0 vulnerabilities reported |
+| Root npm ci | Passed; 303 packages installed; full tree reported 2 critical and 1 moderate advisory |
+| Backend npm ci | Passed; 293 packages installed; 0 vulnerabilities reported |
+| Frontend npm ci | Passed; 389 packages added; 0 vulnerabilities reported |
+| Root test isolation, npm test | Passed: 22 tests across 3 files; 1 database integration test skipped |
+| Backend typecheck | Passed, including Prisma generation |
+| Backend tests | Passed: 85 across 7 files |
+| Backend build | Passed |
 | Frontend typecheck and lint | Passed |
-| Frontend tests | Passed: 46 tests across 3 files |
-| Frontend production build | Passed; emits a >500 kB main-chunk warning and two third-party Zod annotation warnings |
-| Chromium Playwright acceptance | Passed: 39 cases, 1 worker, 2.3 minutes |
-| Local production-mode API smoke | 5 PASS, 0 FAIL, 5 BLOCKED |
+| Frontend tests | Passed: 46 across 3 files |
+| Frontend build | Passed; main chunk exceeds 500 kB and two third-party Zod annotation warnings remain |
+| Chromium Playwright | Passed: 39 cases |
+| Exact hosting build sequence | Passed: npm ci && npm --prefix backend ci && npm run build |
+| Production-only audit, root | Passed: npm audit --omit=dev reports 0 vulnerabilities |
+| Production-only audit, backend | Passed: npm audit --omit=dev reports 0 vulnerabilities |
+| Full root audit | 3 development-tree findings remain: 2 critical in tinypool and 1 moderate in Vitest/@vitest/mocker |
 
-Playwright used the compiled local backend and frontend, with `VITE_USE_MOCKS=false`. The 39 cases include real backend HeatLab simulation requests, SOS, localization in English/Hindi/Marathi, malicious facility/address/report text rendering, failed request handling, Safe Zone UI behavior, and responsive routes from 320 to 1920 pixels. Some UI integrations use explicit fixtures; these cases do not establish live weather or database connectivity.
+The full-root findings are development/test tooling. No npm audit fix was applied. The backend and frontend package installs reported zero full-tree vulnerabilities. Developer B's Effect override removes the earlier Prisma-related advisories from the production dependency scope.
 
-## Local HTTP observations
+## Root-hosted production startup
 
-A Node 24 production-mode server started on port 8127 without database credentials. Read-only HTTP smoke checks against that actual process produced:
+The deployment root is the repository root. In a clean worktree with Node 24 and both dependency installations, the exact build sequence above passed. The root npm start command then started the compiled backend in NODE_ENV=production on port 8130 with FRONTEND_URL=http://localhost:5173, COMMUNITY_WRITES_ENABLED=false, and no DATABASE_URL. Server output confirmed it was listening. The process was stopped after the read-only smoke checks.
+
+The verified local API URL was http://localhost:8130/api/v1. No public HTTPS frontend/backend URL or hosting account access was available. Vercel's frontend root remains frontend/. No deployment or paid service activation occurred.
+
+## Actual HTTP smoke results
+
+The independent smoke script sent read-only GETs and non-persistent simulation/assessment/planning requests. It did not call Safe Zone write routes.
 
 | Check | Result |
 |---|---|
-| `GET /api/v1/health` | HTTP 200 with expected body and `X-Request-Id` |
-| Heavy construction simulation | HTTP 200, SIMULATION / CRITICAL / `STOP_UNSAFE_ACTIVITY` |
-| Vendor simulation | HTTP 200, SIMULATION / HIGH / `REDUCE_STRENUOUS_ACTIVITY` |
-| Scenario indicators | Identical: 35 C, 50%, 5 km/h, heat index 40.68 C |
-| Invalid simulation | HTTP 422 `VALIDATION_ERROR`, request ID matches response header |
-| `GET /weather` | HTTP 503 `WEATHER_UNAVAILABLE` |
-| Live heat assessment | HTTP 503 `WEATHER_UNAVAILABLE` |
-| Protection plan | HTTP 503 `WEATHER_UNAVAILABLE` |
-| Safe Zone discovery | HTTP 503 `SAFE_ZONES_UNAVAILABLE` without `DATABASE_URL` |
-| Safe Zone detail | Not reached; no facility ID was returned |
+| GET /health | HTTP 200 with expected body and X-Request-Id |
+| Heavy construction simulation | HTTP 200, SIMULATION / CRITICAL / STOP_UNSAFE_ACTIVITY |
+| Vendor simulation | HTTP 200, SIMULATION / HIGH / REDUCE_STRENUOUS_ACTIVITY |
+| Scenario parity | 35 C / 50% / 5 km/h, heat index 40.68 C for both |
+| Invalid simulation | HTTP 422 VALIDATION_ERROR; response request ID matched header |
+| GET /weather | HTTP 200 LIVE from Open-Meteo |
+| POST /heat/assess | HTTP 200 CACHED using the real observation |
+| POST /protection/plan | HTTP 200; response passed the protection-plan schema |
+| GET /safe-zones | HTTP 503 SAFE_ZONES_UNAVAILABLE; no DATABASE_URL was configured |
+| GET /safe-zones/:id | Not reached because discovery returned no facility ID |
 
-A direct request to the configured Open-Meteo endpoint also could not connect from this environment. This is an egress limitation here; a live upstream response remains unverified. The API returns sanitized unavailable responses rather than inventing conditions. No community write route was called.
+Totals: 8 PASS, 0 FAIL, 2 BLOCKED. A subsequent weather request reported CACHED, confirming reuse of the retained live observation. Safe Zone storage and Supabase read-only connectivity were not verified. The database integration test was skipped, not passed. No community write was performed.
 
-## Deployment packaging finding
+## Browser/security acceptance
 
-The requested backend deployment root is `backend/`, but `backend/package.json` does not declare `@prisma/adapter-pg` or `pg`. Both are declared only in the repository-root package. The mounted Safe Zone storage loads the compiled root service and imports `@prisma/adapter-pg`. A clean backend-only production installation therefore cannot be assumed to include the database adapter/runtime dependencies. Confirm a deployment bundle that includes all required runtime modules or have the integration owners correct the package boundary before deployment. This QA work records the issue without duplicating Developer B's implementation.
+The 39 Chromium cases ran against the local compiled backend and Vite frontend with VITE_USE_MOCKS=false. They cover actual HeatLab HTTP behavior, actual SOS route, error handling, English/Hindi/Marathi instructions, XSS regression cases, disabled community writes, Safe Zone UI fixtures, accessible controls, and responsive routes from 320 to 1920 px. Cases using explicit weather/Safe Zone fixtures establish UI behavior only, not live database or weather behavior.
 
-## Security and dependency status
+The historical unsafe HTML issue remains resolved in the tested frontend. Hostile facility names, addresses, and report comments render as inert text. Occupational recommendations remain unvalidated prototype guidance, not medical clearance or a certified work-rest plan.
 
-The historical unsafe HTML issue remains resolved in the verified frontend source and browser regression cases; hostile facility names, addresses, and comments remain inert text. Safe Zone writes are disabled by default through `COMMUNITY_WRITES_ENABLED=false`.
+## Deployment preparation and remaining limits
 
-The clean backend install reported 3 high-severity advisories; frontend reported none. A fresh advisory query could not reach npm's audit endpoint from this environment, so current root-package counts and remediation status are unverified. The previous audit counts in the historical report apply only to `db93a5f`; Developer B owns the remediation now in progress. Re-run audits on the exact final commit after that remediation lands.
+Official platform documentation confirms Node 24 support on Vercel and Render. Account authorization, backend provider, project access, billing, exact frontend origin, public HTTPS API URL, and deployed CORS/CSP remain unconfirmed. The user asked to leave account setup and Developer B coordination untouched. No database credentials were supplied, logged, or committed.
 
-## Hosting and secure configuration
+For hosting, use the repository root, install both lockfiles, retain Prisma/TypeScript build dependencies, run npm run build, then npm start. Set NODE_ENV=production, platform PORT, exact FRONTEND_URL, VITE_API_BASE_URL=https://<verified-api-host>/api/v1, VITE_USE_MOCKS=false, and COMMUNITY_WRITES_ENABLED=false. Store Supabase settings only in backend secret configuration. Narrow Vercel connect-src to the approved API host. Do not deploy before an explicitly approved release commit and security review.
 
-Official Vercel and Render documentation confirms Node 24 support. This confirms runtime compatibility, not access to an account. No connected hosting account, verified HTTPS API URL, authorized production origin, billing approval, public deployment, or deployment test was available in this session. No paid service was activated.
+The full-root dev/test audit still contains two critical and one moderate advisory. Production-only root and backend audits return zero. Review the remaining dev-tool advisories with the release security owner before publishing or executing untrusted CI workloads.
 
-Backend configuration names from the actual schema and example:
+## Recommendation
 
-| Variable | Release setting |
-|---|---|
-| `NODE_ENV` | `production` |
-| `PORT` | Platform-assigned port |
-| `FRONTEND_URL` | Exact approved HTTPS frontend origin |
-| `DATABASE_URL` | Supabase PostgreSQL connection string; store only in backend secret settings |
-| `COMMUNITY_WRITES_ENABLED` | `false` until a write-enabled test environment is approved |
-| `OPEN_METEO_BASE_URL` | `https://api.open-meteo.com/v1` |
-| `WEATHER_CACHE_TTL_SECONDS` | `600` |
-
-The root Prisma migration config reads `DIRECT_URL`; it is not an application setting in the backend's Zod schema. Developer B must confirm the safe connection/pooler and migration requirements. No Supabase credentials were present or queried. This session has no direct communication channel to Developer B, so secure credential coordination and read-only connectivity verification remain pending. Never put database values in GitHub or frontend variables.
-
-Vercel's project root is `frontend/`; use `VITE_API_BASE_URL=https://<verified-api-host>/api/v1` and `VITE_USE_MOCKS=false`. Narrow the current `connect-src 'self' https:` CSP to the approved API origin. Configure backend CORS to the exact deployed frontend origin. Account ownership and those domains remain unconfirmed.
-
-## Release recommendation
-
-**Keep the local HeatLab demonstration available; do not deploy this candidate yet.** The simulation fallback is verified, but this commit still needs the backend package/runtime dependency boundary confirmed, live Open-Meteo and Supabase checks from an authorized environment, an updated dependency audit, account/domain confirmation, and an explicitly approved release commit. See [deployment preparation](DEPLOYMENT_GUIDE.md), [known limitations](KNOWN_LIMITATIONS.md), and [release checklist](RELEASE_CHECKLIST.md).
+The local integrated demo is verified with real LIVE Open-Meteo weather, actual assessment/planner responses, and actual HeatLab HTTP behavior. Public deployment is not verified. Safe Zone/Supabase connectivity, account authorization, deployed origins, and full-tree dev dependency advisories remain release gates. Keep the local HeatLab fallback available.

@@ -1,28 +1,31 @@
 # SunShield Known Limitations
 
-**Verified integration commit:** 8493165a0507d354fe422e918b5ce3290b14e181
+**Verified integration commit:** 992b4845a43848148e2bccdcdc5834efb0607704
 **Review date:** 21 November 2026 (IST)
 
-## Live integrations and deployment
+## Live integration and deployment
 
-- WeatherProvider is composed into the backend and GET /api/v1/weather, POST /api/v1/heat/assess, and POST /api/v1/protection/plan are mounted. On local QA, they returned sanitized HTTP 503 WEATHER_UNAVAILABLE; direct Open-Meteo connectivity was blocked by this environment. A live upstream observation remains unverified.
-- Safe Zone routes are mounted. Without DATABASE_URL, read-only discovery returns sanitized HTTP 503 SAFE_ZONES_UNAVAILABLE. No Supabase query was run because no credentials or authorized connection were available.
-- Safe Zone writes are gated by COMMUNITY_WRITES_ENABLED=false. This QA run called no write route.
-- The backend package root does not declare @prisma/adapter-pg or pg; these are declared at repository root. Verify they are included in the actual backend deployment artifact before release.
-- No Vercel/backend host account, production URL, exact CORS origin, deployed CSP, public health test, or billing approval was available. No deployment or paid service activation occurred.
+- In the clean repository-root production startup, weather returned HTTP 200 LIVE from Open-Meteo; occupational assessment returned HTTP 200 CACHED based on the real observation; protection planning returned HTTP 200 and passed schema validation.
+- Safe Zone routes are mounted, but discovery returned sanitized HTTP 503 SAFE_ZONES_UNAVAILABLE because no DATABASE_URL was configured. Supabase read-only connectivity was not verified. One database integration test was skipped.
+- Community writes remained disabled; no write request was made.
+- Public deployment was not performed. Hosting account access, HTTPS URLs, exact CORS origin, production CSP, and billing authorization remain unconfirmed.
+- Backend and frontend production behavior is verified locally only.
 
-## Security and dependency status
+## Security and dependencies
 
-- The historical unsafe frontend HTML finding is resolved in this code: no dangerous HTML rendering path was found in the reviewed frontend code, and browser regressions confirm hostile facility names, addresses, and comments remain inert.
-- The backend clean install reports 3 high-severity advisories. Frontend install reports zero. A fresh audit query failed because this environment could not connect to npm's audit endpoint; root package current counts and remediation state are unverified. Developer B owns the remediation. Re-run audit on the exact final commit.
-- The previous root audit counts are preserved in the historical report and apply only to baseline db93a5f.
-- No public deployment was assessed.
+- The historical unsafe HTML issue remains resolved in the frontend; hostile facility names, addresses, and comments render as inert text.
+- Root full-tree npm audit reports 2 critical and 1 moderate development/test dependency findings in tinypool and Vitest/@vitest/mocker.
+- Root and backend production-only audits (npm audit --omit=dev) each report zero vulnerabilities. Backend and frontend full package installs reported zero.
+- No automatic dependency fixes were applied.
+- No public deployment or external security assessment was performed.
 
-## Build and test boundaries
+## Build and test scope
 
-- On commit 8493165, backend typecheck/build pass and backend tests pass 85/85 across 7 files.
-- Frontend typecheck/lint/build pass; frontend tests pass 46/46 across 3 files.
-- Chromium Playwright passes 39/39 cases. Tests include local actual-backend HeatLab plus explicit UI fixtures for some service integrations. Fixture cases are not live provider/database verification.
-- Frontend build warns about a main chunk over 500 kB and two third-party Zod annotations; build succeeds.
-- Tests do not establish medical validity. Occupational recommendations remain unvalidated prototype policy, not medical advice or certified work-rest limits.
-- Firefox/Safari, physical mobile devices, formal assistive technology, and qualified human translation review are not covered.
+- Exact hosting build sequence passed with Node 24: root npm ci, backend npm ci, npm run build. Repository-root npm start launched the compiled production app.
+- Root npm test passes 22 tests across three files; the database integration test is skipped, not passed.
+- Backend typecheck/build pass and tests pass 85/85 across seven files.
+- Frontend typecheck/lint/build pass; unit tests pass 46/46 across three files.
+- Chromium Playwright passes 39/39 cases. It uses local actual HeatLab and explicit fixtures for some UI integration cases; fixtures do not establish service connectivity.
+- Frontend build reports a main chunk over 500 kB and two third-party Zod annotation warnings.
+- Occupational recommendations are unvalidated prototype guidance, not medical advice or certified work-rest limits.
+- Firefox/Safari, physical mobile devices, formal assistive technology, and qualified translation review are not covered.

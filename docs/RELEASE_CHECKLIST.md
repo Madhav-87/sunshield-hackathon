@@ -1,36 +1,32 @@
 # SunShield Release Checklist
 
-**Verified candidate:** integration/final-release at 8493165a0507d354fe422e918b5ce3290b14e181
-**QA branch:** qa/final-release-8493165
+**Verified candidate:** integration/final-release at 992b4845a43848148e2bccdcdc5834efb0607704
+**Executable dependency patch:** 832a277000b35381c659d65dc2c4cf20befbfdb9
+**QA branch:** qa/final-release-992b
 
-## Verified on this commit
+## Verified
 
-- [x] Node 24 backend typecheck/build; backend tests 85/85 across 7 files.
-- [x] Frontend typecheck/lint/build; frontend tests 46/46 across 3 files.
-- [x] Chromium Playwright acceptance 39/39, including local actual HeatLab API, SOS, security regressions, language coverage, and responsive routes.
-- [x] Local production-mode backend startup and read-only HTTP smoke: health and HeatLab simulations pass; 5 PASS, 0 FAIL, 5 blocked.
-- [x] Historical unsafe HTML finding remains resolved; hostile text renders inertly.
+- [x] Node 24 clean exact hosting sequence: root npm ci, backend npm ci, npm run build.
+- [x] Repository-root production npm start.
+- [x] Root tests: 22 passed, 1 database integration test skipped.
+- [x] Backend typecheck/build and 85 tests.
+- [x] Frontend typecheck/lint/build and 46 tests.
+- [x] Chromium acceptance: 39 passed.
+- [x] Actual HTTP health, LIVE Open-Meteo, CACHED live assessment, planner, and both HeatLab simulations.
+- [x] Root/backend production-only audits: zero vulnerabilities; backend/frontend package install audits: zero.
+- [x] Historical unsafe HTML issue remains resolved; malicious text stays inert.
 
-## Release blockers
+## Remaining release gates
 
-- [ ] Resolve/verify backend deployment package contents: backend-only manifest omits repository-root @prisma/adapter-pg and pg runtime dependencies needed by Safe Zone storage.
-- [ ] Verify live Open-Meteo weather, assessment, and planner from a network-enabled authorized environment.
-- [ ] Obtain secure Supabase connection settings from Developer B and verify read-only connectivity; never share or commit credential values.
-- [ ] Re-run current root/backend/frontend dependency audits after Developer B's remediation lands; npm audit registry access was unavailable in this QA session.
-- [ ] Confirm authorized Vercel and backend hosting accounts, exact deployment URLs, owner-approved billing, and the backend Node 24 configuration.
-- [ ] Deploy only an explicitly security-reviewed and approved release commit.
-- [ ] Set exact frontend CORS origin and narrow CSP connect-src to the approved API host; verify public health and HeatLab first.
-
-## Deployment evidence
-
-- [ ] Exact approved release commit and review recorded.
-- [ ] Backend public health and HeatLab pass over HTTPS.
-- [ ] Live integrations and read-only Supabase check pass.
-- [ ] Frontend uses verified HTTPS API URL and VITE_USE_MOCKS=false.
-- [ ] Verify CORS, CSP, console errors, deep links, SOS, and supported workflows.
-- [ ] Record public URLs and variable names only; keep secret values out of GitHub and reports.
-- [ ] Preserve the local HeatLab fallback and runbook.
+- [ ] Obtain authorized direct Supabase configuration from Developer B and perform read-only connectivity verification.
+- [ ] Run the skipped database integration test only when an authorized test URL is available.
+- [ ] Review root full-tree development/test audit findings: 2 critical and 1 moderate in tinypool and Vitest tooling.
+- [ ] Confirm authorized hosting accounts, exact public URLs, billing authority, frontend CORS origin, and backend Node 24 runtime settings.
+- [ ] Deploy only an explicitly approved and security-reviewed commit.
+- [ ] Verify public health and HeatLab first, then live integrations, CORS, CSP, routes, SOS, and browser errors over HTTPS.
+- [ ] Keep COMMUNITY_WRITES_ENABLED=false unless a write-enabled test environment is authorized.
+- [ ] Record exact deployed commit/URLs and variable names, never secret values.
 
 ## Recommendation
 
-The local HeatLab fallback is independently verified. This candidate is not ready for public deployment until the package/runtime boundary, live integrations, dependency audit, hosting authorization, and release approval gates are resolved.
+The local integrated demonstration passes with real weather and planning responses. Public deployment and Safe Zone/Supabase access are not verified. Resolve the database, hosting, and development-tool audit gates before release. Preserve the local fallback.
