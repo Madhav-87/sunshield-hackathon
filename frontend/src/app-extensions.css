@@ -1,0 +1,267 @@
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.api-notice {
+  position: sticky;
+  top: 58px;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 8px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border-bottom: 1px solid #e4e8ed;
+}
+.api-notice.demo {
+  background: #fff3db;
+  color: #704500;
+}
+.api-notice.info {
+  background: #edf5ff;
+  color: #19375e;
+}
+.api-notice.success {
+  background: #dcf7f1;
+  color: #005c50;
+}
+.api-notice.warning {
+  background: #fff3db;
+  color: #704500;
+}
+.api-notice.error {
+  background: #fff0ef;
+  color: #991b1b;
+}
+.api-notice .btn {
+  margin-left: auto;
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.mobile-nav {
+  display: none;
+}
+.api-unavailable {
+  min-height: 55vh;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 8px;
+}
+.api-unavailable h1 {
+  font: 600 24px 'Plus Jakarta Sans';
+  margin: 0;
+}
+.api-unavailable p {
+  color: var(--muted);
+}
+.grid > *,
+.card {
+  min-width: 0;
+}
+.zone,
+.profile-row,
+.factor {
+  min-width: 0;
+  gap: 8px;
+}
+.zone-content,
+.factor span,
+.factor b,
+.profile-row b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.weather-chart {
+  height: 154px;
+  margin-top: 16px;
+  background: var(--soft);
+  border-radius: 10px;
+  padding: 10px;
+}
+.chart-empty {
+  height: 154px;
+  margin-top: 16px;
+  background: var(--soft);
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 11px;
+}
+.map-wrap {
+  position: relative;
+  min-height: 480px;
+}
+.map-wrap .map-large {
+  height: 100%;
+  min-height: 480px;
+  padding: 0;
+  background: none;
+}
+.map-wrap .map-detail {
+  z-index: 600;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+}
+.leaflet-map {
+  height: 100%;
+  min-height: 480px;
+  width: 100%;
+  border-radius: 12px;
+  z-index: 1;
+}
+.emergency-page {
+  max-width: 930px;
+  min-height: calc(100vh - 130px);
+}
+.emergency-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 24px 0;
+}
+.emergency-title > svg {
+  color: #b91c1c;
+}
+.emergency-title .title {
+  margin: 4px 0;
+}
+.emergency-grid {
+  grid-template-columns: 1fr 1fr;
+}
+.emergency-grid .card {
+  padding: 24px;
+}
+.emergency-grid h2 {
+  font: 600 20px 'Plus Jakarta Sans';
+}
+.emergency-grid p {
+  line-height: 1.7;
+  color: #454b53;
+}
+.emergency-danger {
+  background: #fff5f3;
+  border-color: #ffd5cf;
+}
+.emergency-danger > svg {
+  color: #b91c1c;
+}
+.call-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: #b91c1c;
+  color: white;
+  border-color: #b91c1c;
+  text-decoration: none;
+  min-height: 48px;
+}
+.no-fluid {
+  padding: 12px;
+  border-radius: 9px;
+  background: #fff2d8;
+  color: #694309 !important;
+}
+.emergency-notice {
+  margin: 16px 0;
+  color: #656a72;
+  font-size: 12px;
+}
+.enterprise-grid {
+  grid-template-columns: 1fr 1fr;
+}
+.contract-pending {
+  max-width: 680px;
+  margin: 40px auto;
+}
+.contract-pending h1 {
+  font: 600 26px 'Plus Jakarta Sans';
+}
+select {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--ink);
+}
+@media (max-width: 560px) {
+  .segment {
+    flex-wrap: wrap;
+  }
+  .segment button {
+    min-width: 0;
+    flex: 1 1 42%;
+  }
+}
+@media (max-width: 650px) {
+  .api-notice {
+    top: 106px;
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+  .topbar {
+    padding-bottom: 8px;
+  }
+  .mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: space-around;
+    background: #fff;
+    border-top: 1px solid var(--line);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 15px #1018280d;
+  }
+  .mobile-nav button {
+    min-height: 48px;
+    flex: 1;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 10px;
+    font-weight: 600;
+    color: #59616b;
+  }
+  .mobile-nav button.active {
+    background: #e8f8f5;
+    color: #006d62;
+  }
+  .main {
+    padding-bottom: 80px;
+  }
+  .emergency-grid,
+  .enterprise-grid {
+    grid-template-columns: 1fr;
+  }
+  .emergency-page {
+    padding-top: 10px;
+  }
+  .map-wrap {
+    min-height: 420px;
+  }
+  .map-wrap .map-large,
+  .leaflet-map {
+    min-height: 420px;
+  }
+}

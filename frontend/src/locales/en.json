@@ -1,0 +1,14 @@
+{
+  "sos": {
+    "title": "Heat illness emergency help",
+    "subtitle": "Recognize the warning signs and act quickly.",
+    "warningSigns": "Warning signs",
+    "signs": "Confusion, collapse, seizures, fainting, or very hot skin",
+    "call": "Call emergency services",
+    "callAction": "Call 112 now",
+    "cool": "Start rapid cooling",
+    "coolText": "Move the person to a cooler shaded place. Loosen extra clothing and cool the skin with water and airflow.",
+    "fluids": "Do not give fluids to someone who is confused, unconscious, or unable to swallow safely.",
+    "notice": "This is emergency guidance, not a diagnosis. Do not delay emergency care."
+  }
+}
