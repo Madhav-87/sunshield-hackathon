@@ -1,0 +1,135 @@
+{
+  "at": "2026-11-21T18:40:13.270Z",
+  "apiFixturesUsed": false,
+  "routes": [
+    {
+      "path": "/",
+      "heading": "उष्ण कामाच्या दिवसासाठी स्पष्ट मार्गदर्शन.",
+      "horizontalOverflow": false,
+      "violations": []
+    },
+    {
+      "path": "/onboarding",
+      "heading": "तुमच्या कामाच्या दिवसाची माहिती द्या",
+      "horizontalOverflow": false,
+      "violations": []
+    },
+    {
+      "path": "/worker/dashboard",
+      "heading": "तुमचा कामाचा दिवस",
+      "horizontalOverflow": false,
+      "violations": []
+    },
+    {
+      "path": "/worker/plan",
+      "heading": "तुमची संरक्षण वेळरेषा",
+      "horizontalOverflow": false,
+      "violations": []
+    },
+    {
+      "path": "/worker/profile",
+      "heading": "तुमच्या कामाच्या दिवसाची माहिती द्या",
+      "horizontalOverflow": false,
+      "violations": []
+    },
+    {
+      "path": "/safe-zones",
+      "heading": "विश्रांतीसाठी ठिकाण शोधा",
+      "horizontalOverflow": false,
+      "violations": []
+    },
+    {
+      "path": "/safe-zones/add",
+      "heading": "शीतलन स्थळ सुचवा",
+      "horizontalOverflow": false,
+      "violations": []
+    },
+    {
+      "path": "/sos",
+      "heading": "उष्णतेच्या आजारासाठी आपत्कालीन मदत",
+      "horizontalOverflow": false,
+      "violations": []
+    },
+    {
+      "path": "/heatlab",
+      "heading": "समान हवामान. वेगवेगळी कामाची परिस्थिती.",
+      "horizontalOverflow": false,
+      "violations": []
+    },
+    {
+      "path": "/enterprise/dashboard",
+      "heading": "कामाच्या ठिकाणाचे संरक्षण",
+      "horizontalOverflow": false,
+      "violations": []
+    },
+    {
+      "path": "/enterprise/planner",
+      "heading": "कामाच्या ठिकाणाचे संरक्षण",
+      "horizontalOverflow": false,
+      "violations": []
+    }
+  ],
+  "pageErrors": [],
+  "requests": [
+    {
+      "url": "http://localhost:8000/api/v1/safe-zones?latitude=18.5204&longitude=73.8567&radiusKm=5&includeDemo=false",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8000/api/v1/safe-zones?latitude=18.5204&longitude=73.8567&radiusKm=5&includeDemo=true",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8000/api/v1/safe-zones/a1000000-0000-4000-8000-000000000001",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8000/api/v1/health",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8000/api/v1/health",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8000/api/v1/simulation/evaluate",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8000/api/v1/simulation/evaluate",
+      "status": 200
+    }
+  ],
+  "harnessNote": "Initial control probe used English labels with a Marathi saved profile; rerun pins English. All eleven route/axe results were preserved from the initial successful route inspection.",
+  "facilityDetail": {
+    "text": "Facility details\nClose\nDemo Water Point 1\n\nSynthetic demo location, Pune\n\nSeating available: Unavailable\n\nOpening hours, if known: —\n\nReported availability: Unknown\n\nSubmissions are pending verification. Do not assume a facility is open or safe.\n\nReported availability\nAvailable\nLimited\nUnavailable\nUnknown\nComment\nReport availability",
+    "hasVerificationBadge": false
+  },
+  "safeZoneDemoCards": [
+    "DEMO · Not verified",
+    "DEMO · Not verified",
+    "DEMO · Not verified"
+  ],
+  "heatlab": {
+    "criticalVisible": true,
+    "highVisible": true,
+    "simulatedLabels": 3
+  },
+  "locales": [
+    {
+      "lang": "en",
+      "replacementCharacter": false,
+      "rawTechnicalKeys": false
+    },
+    {
+      "lang": "hi",
+      "replacementCharacter": false,
+      "rawTechnicalKeys": false
+    },
+    {
+      "lang": "mr",
+      "replacementCharacter": false,
+      "rawTechnicalKeys": false
+    }
+  ]
+}

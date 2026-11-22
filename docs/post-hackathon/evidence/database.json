@@ -1,0 +1,217 @@
+{
+  "at": "2026-11-21T18:36:00.376Z",
+  "environment": {
+    "DATABASE_URL": true,
+    "DIRECT_URL": true,
+    "communityWritesDisabled": true
+  },
+  "mutationsExecuted": false,
+  "connected": true,
+  "counts": {
+    "facilities": 3,
+    "reports": 0,
+    "organizations": 0,
+    "worksites": 0
+  },
+  "verificationCounts": [
+    {
+      "_count": {
+        "_all": 3
+      },
+      "verificationStatus": "DEMO"
+    }
+  ],
+  "runtimeRole": [
+    {
+      "superuser": false,
+      "bypass_rls": true,
+      "create_database": true,
+      "create_roles": true
+    }
+  ],
+  "tables": [
+    {
+      "table_name": "organizations",
+      "rls_enabled": true,
+      "rls_forced": false,
+      "runtime_is_owner": true,
+      "policy_count": 0
+    },
+    {
+      "table_name": "safe_zone_reports",
+      "rls_enabled": true,
+      "rls_forced": false,
+      "runtime_is_owner": true,
+      "policy_count": 0
+    },
+    {
+      "table_name": "safe_zones",
+      "rls_enabled": true,
+      "rls_forced": false,
+      "runtime_is_owner": true,
+      "policy_count": 0
+    },
+    {
+      "table_name": "worksites",
+      "rls_enabled": true,
+      "rls_forced": false,
+      "runtime_is_owner": true,
+      "policy_count": 0
+    }
+  ],
+  "runtimePrivileges": [
+    {
+      "table_name": "organizations",
+      "can_select": true,
+      "can_insert": true,
+      "can_update": true,
+      "can_delete": true
+    },
+    {
+      "table_name": "safe_zone_reports",
+      "can_select": true,
+      "can_insert": true,
+      "can_update": true,
+      "can_delete": true
+    },
+    {
+      "table_name": "safe_zones",
+      "can_select": true,
+      "can_insert": true,
+      "can_update": true,
+      "can_delete": true
+    },
+    {
+      "table_name": "worksites",
+      "can_select": true,
+      "can_insert": true,
+      "can_update": true,
+      "can_delete": true
+    }
+  ],
+  "publicRolePrivileges": [
+    {
+      "role": "anon",
+      "table_name": "organizations",
+      "can_select": true,
+      "can_insert": true,
+      "can_update": true,
+      "can_delete": true
+    },
+    {
+      "role": "anon",
+      "table_name": "safe_zone_reports",
+      "can_select": true,
+      "can_insert": true,
+      "can_update": true,
+      "can_delete": true
+    },
+    {
+      "role": "anon",
+      "table_name": "safe_zones",
+      "can_select": true,
+      "can_insert": true,
+      "can_update": true,
+      "can_delete": true
+    },
+    {
+      "role": "anon",
+      "table_name": "worksites",
+      "can_select": true,
+      "can_insert": true,
+      "can_update": true,
+      "can_delete": true
+    },
+    {
+      "role": "authenticated",
+      "table_name": "organizations",
+      "can_select": true,
+      "can_insert": true,
+      "can_update": true,
+      "can_delete": true
+    },
+    {
+      "role": "authenticated",
+      "table_name": "safe_zone_reports",
+      "can_select": true,
+      "can_insert": true,
+      "can_update": true,
+      "can_delete": true
+    },
+    {
+      "role": "authenticated",
+      "table_name": "safe_zones",
+      "can_select": true,
+      "can_insert": true,
+      "can_update": true,
+      "can_delete": true
+    },
+    {
+      "role": "authenticated",
+      "table_name": "worksites",
+      "can_select": true,
+      "can_insert": true,
+      "can_update": true,
+      "can_delete": true
+    }
+  ],
+  "migrations": [
+    {
+      "migration_name": "202611210001_init",
+      "finished": true,
+      "rolled_back": false
+    }
+  ],
+  "checkConstraints": [
+    {
+      "table_name": "organizations",
+      "constraint_name": "organizations_name_check",
+      "definition": "CHECK ((length(btrim((name)::text)) > 0))"
+    },
+    {
+      "table_name": "safe_zone_reports",
+      "constraint_name": "safe_zone_reports_comment_check",
+      "definition": "CHECK (((comment IS NULL) OR (length((comment)::text) <= 500)))"
+    },
+    {
+      "table_name": "safe_zones",
+      "constraint_name": "safe_zones_latitude_check",
+      "definition": "CHECK (((latitude >= ('-90'::integer)::double precision) AND (latitude <= (90)::double precision)))"
+    },
+    {
+      "table_name": "safe_zones",
+      "constraint_name": "safe_zones_longitude_check",
+      "definition": "CHECK (((longitude >= ('-180'::integer)::double precision) AND (longitude <= (180)::double precision)))"
+    },
+    {
+      "table_name": "safe_zones",
+      "constraint_name": "safe_zones_name_check",
+      "definition": "CHECK ((length(btrim((name)::text)) > 0))"
+    },
+    {
+      "table_name": "worksites",
+      "constraint_name": "worksites_check",
+      "definition": "CHECK ((work_start <> work_end))"
+    },
+    {
+      "table_name": "worksites",
+      "constraint_name": "worksites_latitude_check",
+      "definition": "CHECK (((latitude >= ('-90'::integer)::double precision) AND (latitude <= (90)::double precision)))"
+    },
+    {
+      "table_name": "worksites",
+      "constraint_name": "worksites_longitude_check",
+      "definition": "CHECK (((longitude >= ('-180'::integer)::double precision) AND (longitude <= (180)::double precision)))"
+    },
+    {
+      "table_name": "worksites",
+      "constraint_name": "worksites_name_check",
+      "definition": "CHECK ((length(btrim((name)::text)) > 0))"
+    },
+    {
+      "table_name": "worksites",
+      "constraint_name": "worksites_worker_count_check",
+      "definition": "CHECK ((worker_count >= 0))"
+    }
+  ]
+}

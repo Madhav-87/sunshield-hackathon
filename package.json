@@ -2,11 +2,19 @@
   "name": "sun-shield-database",
   "private": true,
   "type": "module",
-  "overrides": { "effect": "3.22.1" },
+  "overrides": {
+    "effect": "3.22.1"
+  },
   "engines": {
     "node": ">=24 <25"
   },
   "scripts": {
+    "setup": "node scripts/local-dev.mjs setup",
+    "dev": "node scripts/local-dev.mjs dev",
+    "dev:backend": "node scripts/local-dev.mjs backend",
+    "dev:frontend": "node scripts/local-dev.mjs frontend",
+    "doctor": "node scripts/local-dev.mjs doctor",
+    "test:local-dev": "node --test scripts/local-dev.test.mjs",
     "build:infrastructure": "prisma generate && tsc -p tsconfig.build.json",
     "build": "npm --prefix backend run build",
     "start": "npm --prefix backend start",

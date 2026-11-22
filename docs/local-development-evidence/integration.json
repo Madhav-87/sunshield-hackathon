@@ -1,0 +1,70 @@
+{
+  "at": "2026-11-22T05:00:59.208Z",
+  "node": "v24.13.0",
+  "results": [
+    {
+      "name": "combined startup and health readiness",
+      "status": "PASS"
+    },
+    {
+      "name": "duplicate launcher rejects occupied port without stopping application",
+      "status": "PASS"
+    },
+    {
+      "name": "runtime CORS mismatch reproduction and correct exact origin",
+      "status": "PASS"
+    },
+    {
+      "name": "actual browser onboarding, personalized dashboard and planner without mocks",
+      "status": "PASS"
+    },
+    {
+      "name": "actual browser HeatLab and SOS without placing a call",
+      "status": "PASS"
+    },
+    {
+      "name": "frontend CSS hot replacement reaches the open browser",
+      "status": "PASS"
+    },
+    {
+      "name": "backend reload, compilation failure stays stopped, and save recovers",
+      "status": "PASS"
+    },
+    {
+      "name": "shared infrastructure rebuild and backend restart without overlapping builds",
+      "status": "PASS"
+    },
+    {
+      "name": "graceful launcher shutdown releases both service ports",
+      "status": "PASS"
+    },
+    {
+      "name": "restart uses current builds and independent services stop independently",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid configuration fails without leaking its value or starting services",
+      "status": "PASS"
+    },
+    {
+      "name": "missing database configuration still permits non-database application startup",
+      "status": "PASS"
+    },
+    {
+      "name": "backend compilation startup failure leaves no frontend or orphan service",
+      "status": "PASS"
+    },
+    {
+      "name": "frontend startup failure stops its already-ready backend",
+      "status": "PASS"
+    },
+    {
+      "name": "backend health readiness timeout cleans up without starting frontend",
+      "status": "PASS"
+    },
+    {
+      "name": "all environment files and dependency lockfiles preserved byte for byte",
+      "status": "PASS"
+    }
+  ]
+}

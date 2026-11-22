@@ -1,0 +1,188 @@
+{
+  "at": "2026-11-21T18:35:31.163Z",
+  "node": "v24.13.0",
+  "baseline": "ef01c7530bf78948e68094436128330b7f3e7912",
+  "results": [
+    {
+      "name": "root-tests-with-real-database",
+      "cwd": ".",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run"
+      ],
+      "exitCode": 0,
+      "output": "\n RUN  v3.2.7 D:/codestorm\n\n ✓ tests/haversine.test.ts (3 tests) 7ms\n ✓ tests/safezone.service.test.ts (6 tests) 42ms\nstdout | tests/safezone.database.integration.test.ts > read-only Supabase SafeZone integration > connects through the Prisma client and reads existing facility/report data\nRead-only Supabase counts {\"facilities\":3,\"reports\":0,\"verificationStatuses\":[{\"status\":\"DEMO\",\"count\":3}]}\n\n ✓ tests/safezone.routes.test.ts (13 tests) 218ms\nstdout | tests/safezone.database.integration.test.ts > read-only Supabase SafeZone integration > connects through the Prisma client and reads existing facility/report data\nRead-only Safe Zone checks {\"demoFacilities\":3,\"publicDiscoveryExcludesDemo\":true,\"demoInclusiveDiscoveryIncludesEachDemo\":true,\"existingFacilityDetailsLookup\":true}\n\n ✓ tests/safezone.database.integration.test.ts (1 test) 1473ms\n   ✓ read-only Supabase SafeZone integration > connects through the Prisma client and reads existing facility/report data  1045ms\n\n Test Files  4 passed (4)\n      Tests  23 passed (23)\n   Start at  00:04:31\n   Duration  2.67s (transform 503ms, setup 0ms, collect 1.83s, tests 1.74s, environment 1ms, prepare 1.48s)\n\n"
+    },
+    {
+      "name": "backend-tests",
+      "cwd": "backend",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run"
+      ],
+      "exitCode": 0,
+      "output": "\n RUN  v4.1.12 D:/codestorm/backend\n\n\n Test Files  7 passed (7)\n      Tests  85 passed (85)\n   Start at  00:04:36\n   Duration  6.37s (transform 2.59s, setup 0ms, import 18.51s, tests 3.66s, environment 3ms)\n\n"
+    },
+    {
+      "name": "frontend-tests",
+      "cwd": "frontend",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run"
+      ],
+      "exitCode": 0,
+      "output": "\n RUN  v4.1.12 D:/codestorm/frontend\n\n\n Test Files  3 passed (3)\n      Tests  46 passed (46)\n   Start at  00:04:36\n   Duration  12.65s (transform 1.18s, setup 4.25s, import 2.20s, tests 3.19s, environment 18.40s)\n\n"
+    },
+    {
+      "name": "root-typecheck",
+      "cwd": ".",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "name": "backend-typecheck",
+      "cwd": "backend",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "name": "frontend-typecheck",
+      "cwd": "frontend",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-b",
+        "--pretty",
+        "false"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "name": "frontend-lint",
+      "cwd": "frontend",
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "."
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "name": ".-audit-full",
+      "cwd": ".",
+      "command": [
+        "node",
+        "C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+        "audit",
+        "--json"
+      ],
+      "exitCode": 1,
+      "output": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {\n    \"@vitest/mocker\": {\n      \"name\": \"@vitest/mocker\",\n      \"severity\": \"moderate\",\n      \"isDirect\": false,\n      \"via\": [\n        {\n          \"source\": 1193684,\n          \"name\": \"@vitest/mocker\",\n          \"dependency\": \"@vitest/mocker\",\n          \"title\": \"Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock\",\n          \"url\": \"https://github.com/advisories/GHSA-82fw-gwwq-j7x9\",\n          \"severity\": \"moderate\",\n          \"cwe\": [\n            \"CWE-22\"\n          ],\n          \"cvss\": {\n            \"score\": 5.9,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N\"\n          },\n          \"range\": \">=2.1.0 <4.1.11\"\n        },\n        {\n          \"source\": 1242767,\n          \"name\": \"@vitest/mocker\",\n          \"dependency\": \"@vitest/mocker\",\n          \"title\": \"Vitest: Code injection via unauthenticated manual mock registration\",\n          \"url\": \"https://github.com/advisories/GHSA-qxg6-89mg-rqv8\",\n          \"severity\": \"moderate\",\n          \"cwe\": [\n            \"CWE-94\",\n            \"CWE-116\",\n            \"CWE-306\"\n          ],\n          \"cvss\": {\n            \"score\": 4.7,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:L/I:L/A:N\"\n          },\n          \"range\": \">=2.1.0-beta.7 <4.1.12\"\n        }\n      ],\n      \"effects\": [\n        \"vitest\"\n      ],\n      \"range\": \"<=4.1.11\",\n      \"nodes\": [\n        \"node_modules/@vitest/mocker\"\n      ],\n      \"fixAvailable\": {\n        \"name\": \"vitest\",\n        \"version\": \"5.1.1\",\n        \"isSemVerMajor\": true\n      }\n    },\n    \"tinypool\": {\n      \"name\": \"tinypool\",\n      \"severity\": \"critical\",\n      \"isDirect\": false,\n      \"via\": [\n        {\n          \"source\": 1241260,\n          \"name\": \"tinypool\",\n          \"dependency\": \"tinypool\",\n          \"title\": \"Tinypool: Prototype Pollution gadget in worker options leads to Remote Code Execution\",\n          \"url\": \"https://github.com/advisories/GHSA-5gmw-xhrv-c9v3\",\n          \"severity\": \"critical\",\n          \"cwe\": [\n            \"CWE-1321\"\n          ],\n          \"cvss\": {\n            \"score\": 0,\n            \"vectorString\": null\n          },\n          \"range\": \"<=2.1.0\"\n        },\n        {\n          \"source\": 1241261,\n          \"name\": \"tinypool\",\n          \"dependency\": \"tinypool\",\n          \"title\": \"Tinypool: Prototype Pollution Gadget to RCE in run() options\",\n          \"url\": \"https://github.com/advisories/GHSA-85c8-ppgw-ccpr\",\n          \"severity\": \"critical\",\n          \"cwe\": [\n            \"CWE-94\",\n            \"CWE-1321\"\n          ],\n          \"cvss\": {\n            \"score\": 0,\n            \"vectorString\": null\n          },\n          \"range\": \"<2.1.2\"\n        }\n      ],\n      \"effects\": [\n        \"vitest\"\n      ],\n      \"range\": \"<=2.1.1\",\n      \"nodes\": [\n        \"node_modules/tinypool\"\n      ],\n      \"fixAvailable\": {\n        \"name\": \"vitest\",\n        \"version\": \"5.1.1\",\n        \"isSemVerMajor\": true\n      }\n    },\n    \"vitest\": {\n      \"name\": \"vitest\",\n      \"severity\": \"critical\",\n      \"isDirect\": true,\n      \"via\": [\n        \"@vitest/mocker\",\n        {\n          \"source\": 1193683,\n          \"name\": \"vitest\",\n          \"dependency\": \"vitest\",\n          \"title\": \"Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock\",\n          \"url\": \"https://github.com/advisories/GHSA-82fw-gwwq-j7x9\",\n          \"severity\": \"moderate\",\n          \"cwe\": [\n            \"CWE-22\"\n          ],\n          \"cvss\": {\n            \"score\": 5.9,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N\"\n          },\n          \"range\": \">=2.1.0 <4.1.11\"\n        },\n        \"tinypool\"\n      ],\n      \"effects\": [],\n      \"range\": \"0.0.95 - 4.1.10\",\n      \"nodes\": [\n        \"node_modules/vitest\"\n      ],\n      \"fixAvailable\": {\n        \"name\": \"vitest\",\n        \"version\": \"5.1.1\",\n        \"isSemVerMajor\": true\n      }\n    }\n  },\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 1,\n      \"high\": 0,\n      \"critical\": 2,\n      \"total\": 3\n    },\n    \"dependencies\": {\n      \"prod\": 219,\n      \"dev\": 131,\n      \"optional\": 54,\n      \"peer\": 3,\n      \"peerOptional\": 0,\n      \"total\": 353\n    }\n  }\n}\n"
+    },
+    {
+      "name": ".-audit-production",
+      "cwd": ".",
+      "command": [
+        "node",
+        "C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+        "audit",
+        "--json",
+        "--omit=dev"
+      ],
+      "exitCode": 0,
+      "output": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {},\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 0,\n      \"high\": 0,\n      \"critical\": 0,\n      \"total\": 0\n    },\n    \"dependencies\": {\n      \"prod\": 219,\n      \"dev\": 131,\n      \"optional\": 54,\n      \"peer\": 3,\n      \"peerOptional\": 0,\n      \"total\": 353\n    }\n  }\n}\n"
+    },
+    {
+      "name": "backend-audit-full",
+      "cwd": "backend",
+      "command": [
+        "node",
+        "C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+        "audit",
+        "--json"
+      ],
+      "exitCode": 0,
+      "output": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {},\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 0,\n      \"high\": 0,\n      \"critical\": 0,\n      \"total\": 0\n    },\n    \"dependencies\": {\n      \"prod\": 205,\n      \"dev\": 138,\n      \"optional\": 60,\n      \"peer\": 13,\n      \"peerOptional\": 0,\n      \"total\": 350\n    }\n  }\n}\n"
+    },
+    {
+      "name": "backend-audit-production",
+      "cwd": "backend",
+      "command": [
+        "node",
+        "C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+        "audit",
+        "--json",
+        "--omit=dev"
+      ],
+      "exitCode": 0,
+      "output": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {},\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 0,\n      \"high\": 0,\n      \"critical\": 0,\n      \"total\": 0\n    },\n    \"dependencies\": {\n      \"prod\": 205,\n      \"dev\": 138,\n      \"optional\": 60,\n      \"peer\": 13,\n      \"peerOptional\": 0,\n      \"total\": 350\n    }\n  }\n}\n"
+    },
+    {
+      "name": "frontend-audit-full",
+      "cwd": "frontend",
+      "command": [
+        "node",
+        "C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+        "audit",
+        "--json"
+      ],
+      "exitCode": 0,
+      "output": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {},\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 0,\n      \"high\": 0,\n      \"critical\": 0,\n      \"total\": 0\n    },\n    \"dependencies\": {\n      \"prod\": 53,\n      \"dev\": 378,\n      \"optional\": 53,\n      \"peer\": 26,\n      \"peerOptional\": 0,\n      \"total\": 439\n    }\n  }\n}\n"
+    },
+    {
+      "name": "frontend-audit-production",
+      "cwd": "frontend",
+      "command": [
+        "node",
+        "C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+        "audit",
+        "--json",
+        "--omit=dev"
+      ],
+      "exitCode": 0,
+      "output": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {},\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 0,\n      \"high\": 0,\n      \"critical\": 0,\n      \"total\": 0\n    },\n    \"dependencies\": {\n      \"prod\": 53,\n      \"dev\": 378,\n      \"optional\": 53,\n      \"peer\": 26,\n      \"peerOptional\": 0,\n      \"total\": 439\n    }\n  }\n}\n"
+    },
+    {
+      "name": "prisma-validate",
+      "cwd": ".",
+      "command": [
+        "node",
+        "node_modules/prisma/build/index.js",
+        "validate"
+      ],
+      "exitCode": 0,
+      "output": "Loaded Prisma config from prisma7.config.ts.\n\nPrisma schema loaded from schema.prisma.\nThe schema at schema.prisma is valid 🚀\n"
+    },
+    {
+      "name": "prisma-readonly-schema-diff",
+      "cwd": ".",
+      "command": [
+        "node",
+        "node_modules/prisma/build/index.js",
+        "migrate",
+        "diff",
+        "--from-config-datasource",
+        "--to-schema",
+        "schema.prisma",
+        "--exit-code"
+      ],
+      "exitCode": 0,
+      "output": "Loaded Prisma config from prisma7.config.ts.\n\nNo difference detected.\n\n"
+    }
+  ]
+}

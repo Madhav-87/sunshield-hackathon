@@ -1,0 +1,143 @@
+{
+  "at": "2026-11-21T18:50:23.193Z",
+  "branch": "develop",
+  "head": "ef01c7530bf78948e68094436128330b7f3e7912",
+  "originMain": "ef01c7530bf78948e68094436128330b7f3e7912",
+  "backupRelease": "ef01c7530bf78948e68094436128330b7f3e7912",
+  "archivedDevelop": "f7f02ce2270de59f24e67494785a1636c71e1f68",
+  "submissionObjectAvailable": false,
+  "docs": [
+    {
+      "name": "COMPLETE_CODEBASE_AUDIT.md",
+      "bytes": 15208
+    },
+    {
+      "name": "CURRENT_PROJECT_STATUS.md",
+      "bytes": 5093
+    },
+    {
+      "name": "DATABASE_AUDIT.md",
+      "bytes": 5311
+    },
+    {
+      "name": "DEVELOPMENT_ROADMAP.md",
+      "bytes": 20895
+    },
+    {
+      "name": "FEATURE_COMPLETION_MATRIX.md",
+      "bytes": 7295
+    },
+    {
+      "name": "PRIORITIZED_BACKLOG.md",
+      "bytes": 4274
+    },
+    {
+      "name": "REQUIREMENTS_GAP_ANALYSIS.md",
+      "bytes": 6995
+    },
+    {
+      "name": "SECURITY_AUDIT.md",
+      "bytes": 6474
+    },
+    {
+      "name": "TECHNICAL_DEBT_REGISTER.md",
+      "bytes": 7038
+    }
+  ],
+  "issues": [],
+  "changedExecutableFiles": "",
+  "trackedConfiguredCredentialMatches": [],
+  "environmentFileIgnored": true,
+  "communityWritesDisabled": true,
+  "locales": {
+    "en": {
+      "keys": 245,
+      "emptyValues": 0
+    },
+    "hi": {
+      "keys": 245,
+      "emptyValues": 0
+    },
+    "mr": {
+      "keys": 245,
+      "emptyValues": 0
+    }
+  },
+  "checks": [
+    {
+      "name": "root-tests-with-real-database",
+      "exitCode": 0
+    },
+    {
+      "name": "backend-tests",
+      "exitCode": 0
+    },
+    {
+      "name": "frontend-tests",
+      "exitCode": 0
+    },
+    {
+      "name": "root-typecheck",
+      "exitCode": 0
+    },
+    {
+      "name": "backend-typecheck",
+      "exitCode": 0
+    },
+    {
+      "name": "frontend-typecheck",
+      "exitCode": 0
+    },
+    {
+      "name": "frontend-lint",
+      "exitCode": 0
+    },
+    {
+      "name": ".-audit-full",
+      "exitCode": 1
+    },
+    {
+      "name": ".-audit-production",
+      "exitCode": 0
+    },
+    {
+      "name": "backend-audit-full",
+      "exitCode": 0
+    },
+    {
+      "name": "backend-audit-production",
+      "exitCode": 0
+    },
+    {
+      "name": "frontend-audit-full",
+      "exitCode": 0
+    },
+    {
+      "name": "frontend-audit-production",
+      "exitCode": 0
+    },
+    {
+      "name": "prisma-validate",
+      "exitCode": 0
+    },
+    {
+      "name": "prisma-readonly-schema-diff",
+      "exitCode": 0
+    }
+  ],
+  "buildBrowser": [
+    {
+      "name": "root-consolidated-production-build",
+      "exitCode": 0
+    },
+    {
+      "name": "frontend-production-build",
+      "exitCode": 0
+    },
+    {
+      "name": "chromium-acceptance",
+      "exitCode": 0
+    }
+  ],
+  "routeAxeViolations": 0
+}

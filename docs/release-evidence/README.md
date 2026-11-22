@@ -32,3 +32,6 @@ Captured from the running integrated application, with mocks disabled, on 21 Nov
 At capture, Pune observations were 21.5 C / 51% / 5 km/h, observed 22:15 IST. Cool actual conditions returned CAUTION and no reported heat index outside the established envelope. No threshold was changed to produce a presentation result. API values and timestamps naturally change; see each captured response for provenance.
 
 The older files in this historical section did not establish database connectivity. New closure evidence above independently establishes read-only Supabase results. Neither phase establishes verified real resources, medical safety, measured impact, actual write success or public deployment. See [the current release handoff](../FINAL_RELEASE.md).
+
+
+Closure consolidation: reviewed Developer C QA branch 4dd73ff selectively (release documentation and read-only smoke script only). Independent C evidence is scoped to 992b484; current database evidence is retained separately. Root README and demo startup now describe the repository-root deployment architecture. Developer D presentation branch/location remains requested through coordination issue #1. No engine, frontend design, API contract, dependency, or database changes were made. Main merge and release tag require exact-candidate approval.

@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-21T18:49:54.034Z",
+  "fixtureResponses": false,
+  "clockOnlySimulation": true,
+  "before": {
+    "calls": 4,
+    "advisory": "CAUTION",
+    "staleWarning": 0
+  },
+  "after": {
+    "calls": 4,
+    "advisory": "CAUTION",
+    "staleWarning": 0,
+    "clientTime": "2026-11-21T19:54:57.749Z"
+  },
+  "confirmedNoRefresh": true
+}

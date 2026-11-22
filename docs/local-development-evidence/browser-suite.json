@@ -1,0 +1,39 @@
+{
+  "fullSuite": {
+    "passed": 36,
+    "failed": 3,
+    "exitCode": 1,
+    "durationMinutes": 6.6,
+    "failures": "page.goto waiting for load exceeded 45000ms",
+    "traceSummaries": [
+      {
+        "width": 320,
+        "route": "/safe-zones",
+        "unfinishedExternalHosts": [
+          "a.tile.openstreetmap.org",
+          "b.tile.openstreetmap.org",
+          "c.tile.openstreetmap.org",
+          "fonts.gstatic.com"
+        ]
+      },
+      {
+        "width": 360,
+        "route": "/safe-zones",
+        "unfinishedExternalHosts": ["fonts.gstatic.com"]
+      },
+      {
+        "width": 375,
+        "route": "/onboarding",
+        "unfinishedExternalHosts": ["fonts.googleapis.com"]
+      }
+    ]
+  },
+  "targetedRetry": {
+    "command": "npm.cmd --prefix frontend run test:e2e -- --grep \"responsive routes at (320|360|375)px\"",
+    "passed": 3,
+    "failed": 0,
+    "exitCode": 0,
+    "durationSeconds": 51.9
+  },
+  "note": "Initial failures retained. Tests and timeout configuration unchanged."
+}

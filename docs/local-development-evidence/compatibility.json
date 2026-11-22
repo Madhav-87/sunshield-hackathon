@@ -1,0 +1,8 @@
+{
+  "at": "2026-11-22T05:05:08.482Z",
+  "manualFrontend": true,
+  "reactTypeScriptFastRefresh": true,
+  "databaseFreePrismaGeneration": true,
+  "manualBackendStartup": "BLOCKED_BY_POLICY",
+  "productionBackendStartup": "UNVERIFIED"
+}

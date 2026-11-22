@@ -19,7 +19,7 @@ if (process.env.FRONTEND_E2E_PREVIEW === 'true') {
 
 export default defineConfig({
   plugins: [react()],
-  server: { host: '127.0.0.1', port: 5173, strictPort: true },
+  server: { host: 'localhost', port: 5173, strictPort: true },
   preview: { headers: previewHeaders },
   test: {
     environment: 'jsdom',

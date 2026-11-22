@@ -1,0 +1,78 @@
+{
+  "verifiedAt": "2026-11-21T18:05:50.480Z",
+  "node": "v24.13.0",
+  "baseCommit": "ef01c7530bf78948e68094436128330b7f3e7912",
+  "changes": "Reviewed QA documentation and read-only smoke script only",
+  "results": [
+    {
+      "name": "root-typecheck",
+      "exitCode": 0,
+      "output": "\n> typecheck\n> tsc --noEmit\n\n"
+    },
+    {
+      "name": "backend-typecheck",
+      "exitCode": 0,
+      "output": "\n> sunshield-backend@1.0.0 typecheck\n> npm --prefix .. run build:infrastructure && tsc --noEmit\n\n\n> build:infrastructure\n> prisma generate && tsc -p tsconfig.build.json\n\nLoaded Prisma config from prisma7.config.ts.\n\nPrisma schema loaded from schema.prisma.\n\n✔ Generated Prisma Client (7.10.1) to .\\generated\\prisma in 289ms\n\n"
+    },
+    {
+      "name": "root-tests",
+      "exitCode": 1,
+      "output": "\n> test\n> vitest run\n\n\n RUN  v3.2.7 D:/codestorm\n\n ✓ tests/haversine.test.ts (3 tests) 10ms\n ✓ tests/safezone.service.test.ts (6 tests) 64ms\nstdout | tests/safezone.database.integration.test.ts > read-only Supabase SafeZone integration > connects through the Prisma client and reads existing facility/report data\nRead-only Supabase counts {\"facilities\":3,\"reports\":0,\"verificationStatuses\":[{\"status\":\"DEMO\",\"count\":3}]}\n\n ✓ tests/safezone.routes.test.ts (13 tests) 601ms\nstdout | tests/safezone.database.integration.test.ts > read-only Supabase SafeZone integration\nRead-only Safe Zone checks {\"demoFacilities\":3,\"publicDiscoveryExcludesDemo\":true,\"demoInclusiveDiscoveryIncludesEachDemo\":true,\"existingFacilityDetailsLookup\":true}\n\n ❯ tests/safezone.database.integration.test.ts (1 test | 1 failed) 6627ms\n   × read-only Supabase SafeZone integration > connects through the Prisma client and reads existing facility/report data 5030ms\n     → Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  tests/safezone.database.integration.test.ts > read-only Supabase SafeZone integration > connects through the Prisma client and reads existing facility/report data\nError: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n ❯ tests/safezone.database.integration.test.ts:18:3\n     16|   });\n     17| \n     18|   it('connects through the Prisma client and reads existing facility/r…\n       |   ^\n     19|     if (!database || !safeZoneService) throw new Error('Database integ…\n     20|     const { prisma } = database;\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n\n Test Files  1 failed | 3 passed (4)\n      Tests  1 failed | 22 passed (23)\n   Start at  23:35:14\n   Duration  9.14s (transform 2.54s, setup 0ms, collect 5.63s, tests 7.30s, environment 2ms, prepare 2.78s)\n\n"
+    },
+    {
+      "name": "backend-tests",
+      "exitCode": 0,
+      "output": "\n> sunshield-backend@1.0.0 test\n> vitest run\n\n\n RUN  v4.1.12 D:/codestorm/backend\n\n\n Test Files  7 passed (7)\n      Tests  85 passed (85)\n   Start at  23:35:16\n   Duration  10.05s (transform 1.74s, setup 0ms, import 26.61s, tests 4.96s, environment 3ms)\n\n"
+    },
+    {
+      "name": "frontend-typecheck",
+      "exitCode": 0,
+      "output": "\n> sunshield-frontend@1.0.0 typecheck\n> tsc -b --pretty\n\n"
+    },
+    {
+      "name": "frontend-lint",
+      "exitCode": 0,
+      "output": "\n> sunshield-frontend@1.0.0 lint\n> eslint .\n\n"
+    },
+    {
+      "name": "frontend-tests",
+      "exitCode": 0,
+      "output": "\n> sunshield-frontend@1.0.0 test\n> vitest run\n\n\n RUN  v4.1.12 D:/codestorm/frontend\n\n\n Test Files  3 passed (3)\n      Tests  46 passed (46)\n   Start at  23:35:15\n   Duration  16.25s (transform 763ms, setup 4.19s, import 2.06s, tests 3.18s, environment 27.16s)\n\n"
+    },
+    {
+      "name": "frontend-build",
+      "exitCode": 0,
+      "output": "\n> sunshield-frontend@1.0.0 build\n> tsc -b && vite build\n\nvite v7.3.8 building client environment for production...\ntransforming...\nnode_modules/zod/v4/core/regexes.js (74:0): A comment\n\n\"/** Anchors a pattern source. The interpolation lives here rather than at the call site because\n * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it\n * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */\"\n\nin \"node_modules/zod/v4/core/regexes.js\" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.\nnode_modules/zod/v4/core/util.js (400:0): A comment\n\n\"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle.\"\n\nin \"node_modules/zod/v4/core/util.js\" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.\n✓ 2246 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                            0.60 kB │ gzip:   0.36 kB\ndist/assets/index-Cszf9JoT.css            33.06 kB │ gzip:  11.03 kB\ndist/assets/index-DExMF8bx.js              0.07 kB │ gzip:   0.08 kB\ndist/assets/options-lAaYm_7A.js            1.00 kB │ gzip:   0.52 kB\ndist/assets/FacilityCard-B7m6pbad.js       1.15 kB │ gzip:   0.56 kB\ndist/assets/WorkFields-K3mqryHl.js         1.49 kB │ gzip:   0.53 kB\ndist/assets/queries-BhQ30w_d.js            1.65 kB │ gzip:   0.74 kB\ndist/assets/LocationPicker-_Yquct13.js     1.76 kB │ gzip:   0.86 kB\ndist/assets/EmergencyPage-BgUmogcl.js      1.79 kB │ gzip:   0.78 kB\ndist/assets/EnterprisePage-BZkhpVq7.js     1.80 kB │ gzip:   0.76 kB\ndist/assets/ProtectionPage-C4YMpNlw.js     1.81 kB │ gzip:   0.89 kB\ndist/assets/LandingPage-HAwf5ywf.js        2.09 kB │ gzip:   0.95 kB\ndist/assets/useMutation-CecG2VqQ.js        2.28 kB │ gzip:   0.94 kB\ndist/assets/SubmissionPage-DkoDlSVe.js     2.43 kB │ gzip:   0.99 kB\ndist/assets/OnboardingPage-Dw3WsYvt.js     2.71 kB │ gzip:   1.16 kB\ndist/assets/HeatLabPage-BsAkWSLW.js        4.03 kB │ gzip:   1.65 kB\ndist/assets/AssessmentPanel-DsAPJjqd.js    4.31 kB │ gzip:   1.72 kB\ndist/assets/DashboardPage-DPOrjSB3.js      4.35 kB │ gzip:   1.59 kB\ndist/assets/SafeZonesPage-B6cdwQQJ.js      4.95 kB │ gzip:   1.95 kB\ndist/assets/safety-C-PzyTiL.js             8.73 kB │ gzip:   3.30 kB\ndist/assets/ZoneMap-CW_Gnbua.js          154.95 kB │ gzip:  45.34 kB\ndist/assets/ForecastChart-C_hcDwKF.js    424.70 kB │ gzip: 122.28 kB\ndist/assets/index-DWfKqUoo.js            502.72 kB │ gzip: 152.30 kB\n\n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n✓ built in 13.54s\n"
+    },
+    {
+      "name": ".-audit-full",
+      "exitCode": 1,
+      "output": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {\n    \"@vitest/mocker\": {\n      \"name\": \"@vitest/mocker\",\n      \"severity\": \"moderate\",\n      \"isDirect\": false,\n      \"via\": [\n        {\n          \"source\": 1193684,\n          \"name\": \"@vitest/mocker\",\n          \"dependency\": \"@vitest/mocker\",\n          \"title\": \"Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock\",\n          \"url\": \"https://github.com/advisories/GHSA-82fw-gwwq-j7x9\",\n          \"severity\": \"moderate\",\n          \"cwe\": [\n            \"CWE-22\"\n          ],\n          \"cvss\": {\n            \"score\": 5.9,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N\"\n          },\n          \"range\": \">=2.1.0 <4.1.11\"\n        },\n        {\n          \"source\": 1242767,\n          \"name\": \"@vitest/mocker\",\n          \"dependency\": \"@vitest/mocker\",\n          \"title\": \"Vitest: Code injection via unauthenticated manual mock registration\",\n          \"url\": \"https://github.com/advisories/GHSA-qxg6-89mg-rqv8\",\n          \"severity\": \"moderate\",\n          \"cwe\": [\n            \"CWE-94\",\n            \"CWE-116\",\n            \"CWE-306\"\n          ],\n          \"cvss\": {\n            \"score\": 4.7,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:L/I:L/A:N\"\n          },\n          \"range\": \">=2.1.0-beta.7 <4.1.12\"\n        }\n      ],\n      \"effects\": [\n        \"vitest\"\n      ],\n      \"range\": \"<=4.1.11\",\n      \"nodes\": [\n        \"node_modules/@vitest/mocker\"\n      ],\n      \"fixAvailable\": {\n        \"name\": \"vitest\",\n        \"version\": \"5.1.1\",\n        \"isSemVerMajor\": true\n      }\n    },\n    \"tinypool\": {\n      \"name\": \"tinypool\",\n      \"severity\": \"critical\",\n      \"isDirect\": false,\n      \"via\": [\n        {\n          \"source\": 1241260,\n          \"name\": \"tinypool\",\n          \"dependency\": \"tinypool\",\n          \"title\": \"Tinypool: Prototype Pollution gadget in worker options leads to Remote Code Execution\",\n          \"url\": \"https://github.com/advisories/GHSA-5gmw-xhrv-c9v3\",\n          \"severity\": \"critical\",\n          \"cwe\": [\n            \"CWE-1321\"\n          ],\n          \"cvss\": {\n            \"score\": 0,\n            \"vectorString\": null\n          },\n          \"range\": \"<=2.1.0\"\n        },\n        {\n          \"source\": 1241261,\n          \"name\": \"tinypool\",\n          \"dependency\": \"tinypool\",\n          \"title\": \"Tinypool: Prototype Pollution Gadget to RCE in run() options\",\n          \"url\": \"https://github.com/advisories/GHSA-85c8-ppgw-ccpr\",\n          \"severity\": \"critical\",\n          \"cwe\": [\n            \"CWE-94\",\n            \"CWE-1321\"\n          ],\n          \"cvss\": {\n            \"score\": 0,\n            \"vectorString\": null\n          },\n          \"range\": \"<2.1.2\"\n        }\n      ],\n      \"effects\": [\n        \"vitest\"\n      ],\n      \"range\": \"<=2.1.1\",\n      \"nodes\": [\n        \"node_modules/tinypool\"\n      ],\n      \"fixAvailable\": {\n        \"name\": \"vitest\",\n        \"version\": \"5.1.1\",\n        \"isSemVerMajor\": true\n      }\n    },\n    \"vitest\": {\n      \"name\": \"vitest\",\n      \"severity\": \"critical\",\n      \"isDirect\": true,\n      \"via\": [\n        \"@vitest/mocker\",\n        {\n          \"source\": 1193683,\n          \"name\": \"vitest\",\n          \"dependency\": \"vitest\",\n          \"title\": \"Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock\",\n          \"url\": \"https://github.com/advisories/GHSA-82fw-gwwq-j7x9\",\n          \"severity\": \"moderate\",\n          \"cwe\": [\n            \"CWE-22\"\n          ],\n          \"cvss\": {\n            \"score\": 5.9,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N\"\n          },\n          \"range\": \">=2.1.0 <4.1.11\"\n        },\n        \"tinypool\"\n      ],\n      \"effects\": [],\n      \"range\": \"0.0.95 - 4.1.10\",\n      \"nodes\": [\n        \"node_modules/vitest\"\n      ],\n      \"fixAvailable\": {\n        \"name\": \"vitest\",\n        \"version\": \"5.1.1\",\n        \"isSemVerMajor\": true\n      }\n    }\n  },\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 1,\n      \"high\": 0,\n      \"critical\": 2,\n      \"total\": 3\n    },\n    \"dependencies\": {\n      \"prod\": 219,\n      \"dev\": 131,\n      \"optional\": 54,\n      \"peer\": 3,\n      \"peerOptional\": 0,\n      \"total\": 353\n    }\n  }\n}\n"
+    },
+    {
+      "name": ".-audit-production",
+      "exitCode": 0,
+      "output": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {},\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 0,\n      \"high\": 0,\n      \"critical\": 0,\n      \"total\": 0\n    },\n    \"dependencies\": {\n      \"prod\": 219,\n      \"dev\": 131,\n      \"optional\": 54,\n      \"peer\": 3,\n      \"peerOptional\": 0,\n      \"total\": 353\n    }\n  }\n}\n"
+    },
+    {
+      "name": "backend-audit-full",
+      "exitCode": 0,
+      "output": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {},\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 0,\n      \"high\": 0,\n      \"critical\": 0,\n      \"total\": 0\n    },\n    \"dependencies\": {\n      \"prod\": 205,\n      \"dev\": 138,\n      \"optional\": 60,\n      \"peer\": 13,\n      \"peerOptional\": 0,\n      \"total\": 350\n    }\n  }\n}\n"
+    },
+    {
+      "name": "backend-audit-production",
+      "exitCode": 0,
+      "output": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {},\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 0,\n      \"high\": 0,\n      \"critical\": 0,\n      \"total\": 0\n    },\n    \"dependencies\": {\n      \"prod\": 205,\n      \"dev\": 138,\n      \"optional\": 60,\n      \"peer\": 13,\n      \"peerOptional\": 0,\n      \"total\": 350\n    }\n  }\n}\n"
+    },
+    {
+      "name": "frontend-audit-full",
+      "exitCode": 0,
+      "output": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {},\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 0,\n      \"high\": 0,\n      \"critical\": 0,\n      \"total\": 0\n    },\n    \"dependencies\": {\n      \"prod\": 53,\n      \"dev\": 378,\n      \"optional\": 53,\n      \"peer\": 26,\n      \"peerOptional\": 0,\n      \"total\": 439\n    }\n  }\n}\n"
+    },
+    {
+      "name": "frontend-audit-production",
+      "exitCode": 0,
+      "output": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {},\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 0,\n      \"high\": 0,\n      \"critical\": 0,\n      \"total\": 0\n    },\n    \"dependencies\": {\n      \"prod\": 53,\n      \"dev\": 378,\n      \"optional\": 53,\n      \"peer\": 26,\n      \"peerOptional\": 0,\n      \"total\": 439\n    }\n  }\n}\n"
+    }
+  ]
+}

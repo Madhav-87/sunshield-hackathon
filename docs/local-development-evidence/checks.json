@@ -1,0 +1,152 @@
+{
+  "at": "2026-11-22T05:19:09.316Z",
+  "branch": "chore/local-development-startup",
+  "node": "v24.13.0",
+  "npm": "11.4.1",
+  "setup": {
+    "initial": "PASS",
+    "repeated": "PASS",
+    "setupBatchFromAnotherDirectory": "PASS",
+    "lockfilesUnchanged": true,
+    "environmentFilesPreserved": true,
+    "databaseMutations": false
+  },
+  "commands": [
+    {
+      "command": "npm.cmd run build",
+      "exitCode": 0
+    },
+    {
+      "command": "npm.cmd --prefix frontend run build",
+      "exitCode": 0,
+      "notes": "Existing annotation and bundle-size warnings"
+    },
+    {
+      "command": "npm.cmd run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "npm.cmd --prefix backend run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "npm.cmd --prefix frontend run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "npm.cmd --prefix frontend run lint",
+      "exitCode": 0
+    },
+    {
+      "command": "npm.cmd --prefix backend test",
+      "exitCode": 0,
+      "passed": 85
+    },
+    {
+      "command": "npm.cmd --prefix frontend test",
+      "exitCode": 0,
+      "passed": 46
+    },
+    {
+      "command": "npm.cmd run test:local-dev",
+      "exitCode": 0,
+      "passed": 10
+    },
+    {
+      "command": "npm.cmd test (RUN_DATABASE_INTEGRATION_TESTS=true; default timeout)",
+      "exitCode": 1,
+      "passed": 22,
+      "failed": 1,
+      "notes": "Two runs: existing real database case timed out at 5000ms"
+    },
+    {
+      "command": "npm.cmd test -- --testTimeout=20000 (RUN_DATABASE_INTEGRATION_TESTS=true)",
+      "exitCode": 0,
+      "passed": 23,
+      "notes": "One actual read-only database test; successful case approximately two seconds"
+    },
+    {
+      "command": "node scripts/verify-local-dev.mjs",
+      "exitCode": 0,
+      "passed": 16
+    },
+    {
+      "command": "npm.cmd run doctor -- --database",
+      "exitCode": 0,
+      "notes": "Both services and exact CORS responded; SELECT 1 passed"
+    },
+    {
+      "command": "node scripts/api-smoke.mjs (earlier running launcher)",
+      "exitCode": 0,
+      "passed": 11
+    },
+    {
+      "command": "node scripts/api-smoke.mjs (later batch session)",
+      "exitCode": 1,
+      "passed": 8,
+      "failed": 1,
+      "blocked": 2,
+      "notes": "Safe Zone queries returned 503; database query availability unresolved"
+    },
+    {
+      "command": "Original manual backend npm.cmd start with development environment",
+      "status": "BLOCKED",
+      "notes": "Automatic approval review: blocked by policy"
+    },
+    {
+      "command": "Production backend startup",
+      "status": "UNVERIFIED",
+      "notes": "Manual-start verification rejected; not bypassed"
+    }
+  ],
+  "browser": {
+    "fullSuite": {
+      "passed": 36,
+      "failed": 3,
+      "exitCode": 1,
+      "durationMinutes": 6.6,
+      "failures": "page.goto waiting for load exceeded 45000ms",
+      "traceSummaries": [
+        {
+          "width": 320,
+          "route": "/safe-zones",
+          "unfinishedExternalHosts": [
+            "a.tile.openstreetmap.org",
+            "b.tile.openstreetmap.org",
+            "c.tile.openstreetmap.org",
+            "fonts.gstatic.com"
+          ]
+        },
+        {
+          "width": 360,
+          "route": "/safe-zones",
+          "unfinishedExternalHosts": ["fonts.gstatic.com"]
+        },
+        {
+          "width": 375,
+          "route": "/onboarding",
+          "unfinishedExternalHosts": ["fonts.googleapis.com"]
+        }
+      ]
+    },
+    "targetedRetry": {
+      "command": "npm.cmd --prefix frontend run test:e2e -- --grep \"responsive routes at (320|360|375)px\"",
+      "passed": 3,
+      "failed": 0,
+      "exitCode": 0,
+      "durationSeconds": 51.9
+    },
+    "note": "Initial failures retained. Tests and timeout configuration unchanged."
+  },
+  "additional": {
+    "directManualFrontend": true,
+    "reactTypeScriptFastRefresh": true,
+    "cssHmr": true,
+    "startBatchFromAnotherDirectory": true,
+    "ctrlCReleasedPorts": true,
+    "databaseFreePrismaGeneration": true,
+    "defaultBrowserOpenRequestDispatched": true,
+    "defaultBrowserWindowVisuallyVerified": false,
+    "physicalDoubleClickVisuallyVerified": false
+  }
+}
